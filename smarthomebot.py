@@ -10,11 +10,12 @@ Use /help to list available commands.
 """
 
 import logging
-from telegram import Update, ForceReply
+from telegram import Update, ForceReply, User
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 # bot variables
 AUTH_TOKEN = "bot_token"
+ALLOWED_USERS = ["user_id_1", "user_id_2"]
 commands = ['/start', '/help']
 
 # multiline markup text used for /help command.
@@ -41,19 +42,25 @@ def help_command(update: Update, context: CallbackContext) -> None:
 def not_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry, I can\'t understand that.')
 
+def not_allowed_users(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Sorry you\'re not allowed to use this bot')
+
 def main() -> None:
     # create the Updater and pass it your bot's token.
     updater = Updater(AUTH_TOKEN)
 
-    # get the dispatcher to register handlers.
+   # get the dispatcher to register handlers.
     dispatcher = updater.dispatcher
+
+   # not allowed users can't interact with the bot.
+    updater.dispatcher.add_handler(MessageHandler(Filters.user(ALLOWED_USERS), not_allowed_users))
 
     # commands.
     dispatcher.add_handler(CommandHandler("start", start_command))
     dispatcher.add_handler(CommandHandler("help", help_command))
 
     # on non command i.e message, reply with not_command function.
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.text(commands), not_command))
+    updater.dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.text(commands), not_command))
 
     # start the bot.
     updater.start_polling()
