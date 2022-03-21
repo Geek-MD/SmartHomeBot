@@ -9,7 +9,7 @@ A simple Telegram Bot used to automate notifications of a Smart Home. This is a 
 
 This bot relies on [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot), so you have to install this package first.
 
-[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![GitHub release](https://img.shields.io/github/release/Geek-MD/SmartHomeBot.svg)](https://GitHub.com/Geek-MD/SmartHomeBot/releases/) [![GitHub branches](https://badgen.net/github/branches/Geek-MD/SmartHomeBot)](https://github.com/Geek-MD/SmartHomeBot/) ![GitHub Stars](https://badgen.net/github/stars/Geek-MD/SmartHomeBot)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/) [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE) [![GitHub release](https://img.shields.io/github/release/Geek-MD/SmartHomeBot.svg)](https://GitHub.com/Geek-MD/SmartHomeBot/releases/) [![GitHub branches](https://badgen.net/github/branches/Geek-MD/SmartHomeBot)](https://github.com/Geek-MD/SmartHomeBot/) ![GitHub Stars](https://badgen.net/github/stars/Geek-MD/SmartHomeBot)
 
 
 ## Roadmap
