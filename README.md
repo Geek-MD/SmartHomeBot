@@ -6,10 +6,8 @@
 SmartHomeBot
 </h1>
 A simple Telegram Bot used to automate notifications of a Smart Home. This is a work in progress.
-
-<p align="center"><a href="https://www.python.org/"><img src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg"></a></p>
-
-[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE) [![GitHub release](https://img.shields.io/github/release/Geek-MD/SmartHomeBot.svg)](https://GitHub.com/Geek-MD/SmartHomeBot/releases/) [![GitHub branches](https://badgen.net/github/branches/Geek-MD/SmartHomeBot)](https://github.com/Geek-MD/SmartHomeBot/) ![GitHub Stars](https://badgen.net/github/stars/Geek-MD/SmartHomeBot)
+<br />
+<p align="center"><a href="https://www.python.org/"><img alt ="Made with Python" src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg"> <img src="https://img.shields.io/github/license/Naereen/StrapDown.js.svg"> <a href="https://GitHub.com/Geek-MD/SmartHomeBot/releases/"><img alt="GitHub Releases" src="https://img.shields.io/github/release/Geek-MD/SmartHomeBot.svg"></a> <a href="https://github.com/Geek-MD/SmartHomeBot/"><img alt="GitHub Branches" src="https://badgen.net/github/branches/Geek-MD/SmartHomeBot"></a> <img alt="GitHub Stars" src="https://badgen.net/github/stars/Geek-MD/SmartHomeBot"></p>
 
 ## Basic Installation
   This bot relies on [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot), so you have to install this package first with
