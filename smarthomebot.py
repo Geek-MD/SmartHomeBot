@@ -43,7 +43,7 @@ def help_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_markdown_v2(help_command_text)
 
 def reboot_command(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('Sorry, reboot command is dissabled for now.')
+    update.message.reply_text('Sorry, reboot command is disabled for now.')
 
 def not_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry, I can\'t understand that.')
@@ -65,7 +65,7 @@ def main() -> None:
     updater.dispatcher.add_handler(MessageHandler(Filters.user(ALLOWED_USERS), not_allowed_users))
 
    # not admin users can't run admin restricted commands.
-    dispatcher.add_handler(MessageHandler(Filters.text(admin_commands) & ~Filters.user(ADMIN_USERS), not_admin))
+    dispatcher.add_handler(MessageHandler(Filters.text(admin_commands) & Filters.user(ADMIN_USERS), not_admin))
 
     # commands.
     dispatcher.add_handler(CommandHandler("start", start_command))
@@ -73,7 +73,7 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("reboot", reboot_command))
 
     # on non command i.e message, reply with not_command function.
-    updater.dispatcher.add_handler(MessageHandler(Filters.text & Filters.text(commands), not_command))
+    updater.dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.text(commands), not_command))
 
     # start the bot.
     updater.start_polling()
