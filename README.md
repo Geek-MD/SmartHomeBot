@@ -19,7 +19,7 @@ SmartHomeBot
   
   `git clone https://github.com/Geek-MD/SmartHomeBot.git`
   
-  Edit smarthomebot.py, add your bot Telegram token, id number of allowed users, and you're done. Now run with
+  Edit smarthomebot.py, add your bot Telegram token, id number of allowed and admin users, and you're done. Now run with
   
   `python smarthomebot.py`
   
@@ -28,7 +28,7 @@ SmartHomeBot
 ## Roadmap
 - [x] Basic functionality, only */start* and */help* commands. [`v0.1.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.1.0)
 - [X] Add a list of allowed users who can interact with the bot. [`v0.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.2.0)
-- [ ] Add a list of admin users who can run admin restricted commands. [`v0.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.3.0)
+- [X] Add a list of admin users who can run admin restricted commands. [`v0.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.3.0)
 - [ ] Add */reboot* command, restricted to admin users.
 - [ ] Add confirmation buttons to execute */reboot* command.
 - [ ] Critical data like Telegram bot token, allowed users list and admin users list are stored in external separate JSON files.
