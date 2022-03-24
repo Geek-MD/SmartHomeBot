@@ -19,7 +19,7 @@ SmartHomeBot
   
   `git clone https://github.com/Geek-MD/SmartHomeBot.git`
   
-  Edit smarthomebot.py, add your bot Telegram token, id number of allowed users, and you're done. Now run with
+  Edit smarthomebot.py, add your bot Telegram token, id number of allowed and admin users, and you're done. Now run with
   
   `python smarthomebot.py`
   
