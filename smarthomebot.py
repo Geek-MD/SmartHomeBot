@@ -9,14 +9,10 @@ Usage:
 Use /help to list available commands.
 """
 
-import logging, os, time
+import logging, os, time, json
 from telegram import Update, User, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
 
-# bot variables
-AUTH_TOKEN = "bot-token" # string
-ALLOWED_USERS = [user_id_1, user_id_2] # integer
-ADMIN_USERS = [user_id_1] #integer
 commands = ['/start', '/help', '/reboot']
 admin_commands = ['/reboot']
 reboot_keyboard = [[InlineKeyboardButton("yes", callback_data='y'), InlineKeyboardButton("no", callback_data='n')]]
@@ -77,14 +73,22 @@ def not_admin(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry, you\'re not an admin, you can\'t use admin restricted commands.')    
 
 def not_allowed_users(update: Update, context: CallbackContext) -> None:
-    update.message.reply_text('Sorry you\'re not allowed to use this bot')
+    update.message.reply_text('Sorry you\'re not allowed to use this bot.')
 
 def main() -> None:
+    # import data stored on external files.
+    with open('smarthomebot.json', 'r') as token:
+        auth_token = json.load(token)
+    with open('allowed_users.json', 'r') as users:
+        allowed_users = json.load(users)
+    with open('admin_users.json', 'r') as admins:
+        admin_users = json.load(admins)
+
     # create the Updater and pass it your bot's token.
-    updater = Updater(AUTH_TOKEN)
+    updater = Updater(auth_token["AUTH_TOKEN"])
 
     # not allowed users can't interact with the bot.
-    updater.dispatcher.add_handler(MessageHandler(~Filters.user(ALLOWED_USERS), not_allowed_users))
+    updater.dispatcher.add_handler(MessageHandler(~Filters.user(allowed_users["USERS"]), not_allowed_users))
 
     # inline buttons.
     updater.dispatcher.add_handler(CallbackQueryHandler(reboot_query))
@@ -93,7 +97,7 @@ def main() -> None:
     updater.dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.text(commands), not_command))
 
     # on admin command, run is_admin_command function.
-    updater.dispatcher.add_handler(MessageHandler(Filters.text(admin_commands) & ~Filters.user(ADMIN_USERS), not_admin))
+    updater.dispatcher.add_handler(MessageHandler(Filters.text(admin_commands) & ~Filters.user(admin_users["ADMINS"]), not_admin))
 
     # commands.
     updater.dispatcher.add_handler(CommandHandler("start", start_command))

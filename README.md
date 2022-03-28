@@ -13,15 +13,21 @@ SmartHomeBot
 ## Basic Installation
   This bot relies on [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot), so you have to install this package first with
   
-  `pip install python-telegram-bot`
+  ```
+  pip install python-telegram-bot
+  ```
   
   Clone this repo with
   
-  `git clone https://github.com/Geek-MD/SmartHomeBot.git`
+  ```
+  git clone https://github.com/Geek-MD/SmartHomeBot.git
+  ```
   
   Edit smarthomebot.py, add your bot Telegram token, id number of allowed and admin users, and you're done. Now run with
 
-  `python smarthomebot.py`
+  ```
+  python smarthomebot.py
+  ```
   
   If you want the bot to run at startup, or advanced configuration, check the [Wiki](https://github.com/Geek-MD/SmartHomeBot/wiki).
   
@@ -32,7 +38,7 @@ SmartHomeBot
 - [X] Fixed a bug with admin restricted commands. [`v0.3.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.3.1)
 - [X] Add */reboot* command, restricted to admin users. [`v0.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.4.0)
 - [X] Add confirmation buttons to execute */reboot* command. [`v0.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.4.0)
-- [ ] Critical data like Telegram bot token, allowed users list and admin users list are stored in external separate JSON files.
+- [X] Critical data like Telegram bot token, allowed users list and admin users list are stored in external separate JSON files. [`v0.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.5.0)
 - [ ] Add */system* command so admins can check CPU temperature of server, CPU and RAM load.
 - [ ] Add */listusers* command so any user can check allowed users list.
 - [ ] Add */adduser* command so admins can add users to the allowed users list.
