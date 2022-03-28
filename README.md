@@ -11,25 +11,31 @@ SmartHomeBot
 <p />
 
 ## Basic Installation
-  This bot relies on [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot), so you have to install this package first with
+This bot relies mainly on *[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)*, so you have to install this package first with
   
-  ```
-  pip install python-telegram-bot
-  ```
-  
-  Clone this repo with
-  
-  ```
-  git clone https://github.com/Geek-MD/SmartHomeBot.git
-  ```
-  
-  Edit smarthomebot.py, add your bot Telegram token, id number of allowed and admin users, and you're done. Now run with
+```
+pip install python-telegram-bot
+```
 
-  ```
-  python smarthomebot.py
-  ```
+Also you have to install *gpiozero* library used for */system* command.
+
+```
+pip install gpiozero
+```
+
+Now clone this repo with
   
-  If you want the bot to run at startup, or advanced configuration, check the [Wiki](https://github.com/Geek-MD/SmartHomeBot/wiki).
+```
+git clone https://github.com/Geek-MD/SmartHomeBot.git
+```
+  
+Edit ***smarthomebot.json*** and add your bot Telegram token. Edit ***allowed_users.json*** and ***admin_users.json*** with id number of allowed and admin users, and you're done. Now run with
+
+```
+python smarthomebot.py
+```
+  
+If you want the bot to run at startup, or advanced configuration, check the [Wiki](https://github.com/Geek-MD/SmartHomeBot/wiki).
   
 ## Roadmap
 - [X] Basic functionality, only */start* and */help* commands. [`v0.1.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.1.0)
@@ -39,7 +45,7 @@ SmartHomeBot
 - [X] Add */reboot* command, restricted to admin users. [`v0.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.4.0)
 - [X] Add confirmation buttons to execute */reboot* command. [`v0.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.4.0)
 - [X] Critical data like Telegram bot token, allowed users list and admin users list are stored in external separate JSON files. [`v0.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.5.0)
-- [ ] Add */system* command so admins can check CPU temperature of server, CPU and RAM load.
+- [X] Add */system* command so admins can check CPU temperature of server, CPU and RAM load. [`v0.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.0)
 - [ ] Add */listusers* command so any user can check allowed users list.
 - [ ] Add */adduser* command so admins can add users to the allowed users list.
 - [ ] Add */makeadmin* command so admins can upgrade a user to admin list.
