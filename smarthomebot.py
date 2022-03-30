@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v0.6.0
+# SmartHomeBot v0.6.1
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -75,13 +75,11 @@ def system_command(update: Update, context: CallbackContext) -> None:
     cpu_load_esc = re.escape(str(round(cpu_load, 1)))
     ram_load = psutil.virtual_memory()
     ram_load_esc = re.escape(str(round(ram_load.percent, 1)))
-    cpu_temp_msg = '*CPU temperature:* ' + cpu_temp_esc + '°C'
-    cpu_load_msg = '*CPU load:* ' + cpu_load_esc + '%'
-    ram_load_msg = '*RAM load:* ' + ram_load_esc + '%'
-    update.message.reply_markdown_v2(cpu_temp_msg)
-    update.message.reply_markdown_v2(cpu_load_msg)
-    update.message.reply_markdown_v2(ram_load_msg)
-
+    system_msg = '*CPU temperature:* ' + cpu_temp_esc + '°C\n'
+    system_msg += '*CPU load:* ' + cpu_load_esc + '%\n'
+    system_msg += '*RAM load:* ' + ram_load_esc + '%'
+    update.message.reply_markdown_v2(system_msg)
+    
 def not_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry, I can\'t understand that.')    
 
