@@ -48,7 +48,10 @@ If you want the bot to run at startup, or advanced configuration, check the [Wik
 - [X] Add */system* command so admins can check CPU temperature of server, CPU and RAM load. [`v0.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.0)
 - [ ] Add */listusers* command so any user can check allowed users list.
 - [ ] Add */adduser* command so admins can add users to the allowed users list.
+- [ ] Add */removeuser* command so admins can remove users from the allowed users list.
+- [ ] Add *owner* tag for main user so he can't be kicked off from allowed users or admin list.
 - [ ] Add */makeadmin* command so admins can upgrade a user to admin list.
+- [ ] Add */revokeadmin* command so an admin can downgrade a user from admin to allowed user, with the exception of bot owner.
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
 - [ ] Add Ring functionality thanks to [python-ring-doorbell](https://github.com/tchellomello/python-ring-doorbell).
