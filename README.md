@@ -11,16 +11,17 @@ SmartHomeBot
 <p />
 
 ## Basic Installation
-This bot relies mainly on *[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)*, so you have to install this package first with
+This bot is programmed to work on a ***Raspberry Py** and relies mainly on *[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)*, so you have to install this package first with
   
 ```
 pip install python-telegram-bot
 ```
 
-Also you have to install *gpiozero* library used for */system* command.
+Also you have to install *gpiozero* and *psutil* library used for */system* command.
 
 ```
 pip install gpiozero
+pip install psutil
 ```
 
 Now clone this repo with
