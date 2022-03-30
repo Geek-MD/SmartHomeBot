@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 
-"""
-SmartHomeBot
-A simple Telegram Bot used to automate notifications for a Smart Home.
-The bot starts automatically and runs until you press Ctrl-C on the command line.
+# SmartHomeBot v0.6.0
+# A simple Telegram Bot used to automate notifications for a Smart Home.
+# The bot starts automatically and runs until you press Ctrl-C on the command line.
+#
+# Usage:
+# Use /help to list available commands.
 
-Usage:
-Use /help to list available commands.
-"""
-
-import logging, os, time, json
+import logging, os, time, json, psutil, re
 from telegram import Update, User, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
+from gpiozero import CPUTemperature
 
-commands = ['/start', '/help', '/reboot']
-admin_commands = ['/reboot']
+# bot variables
+commands = ['/start', '/help', '/reboot', '/system']
+admin_commands = ['/reboot', '/system']
 reboot_keyboard = [[InlineKeyboardButton("yes", callback_data='y'), InlineKeyboardButton("no", callback_data='n')]]
 reboot_keyboard_markup = InlineKeyboardMarkup(reboot_keyboard)
 reboot_option = None
@@ -25,7 +25,10 @@ help_command_text = """This is a simple Telegram Bot used to automate notificati
 *Available commands*
 \/start \- does nothing, bot starts automatically
 \/help \- shows a list of all available commands
-\/reboot \- reboots system \(restricted to admins\)"""
+\/reboot \- reboots system \*
+\/system \- show CPU temp, CPU and RAM load \*
+
+\* Restricted to admins."""
 # end of multiline text
 
 # enable logging.
@@ -65,6 +68,20 @@ def reboot_query(update: Update, context: CallbackContext) -> None:
         elif reboot_option == None:
             continue
 
+def system_command(update: Update, context: CallbackContext) -> None:
+    cpu_temp = CPUTemperature()
+    cpu_temp_esc = re.escape(str(round(cpu_temp.temperature, 1)))
+    cpu_load = psutil.cpu_percent(4)
+    cpu_load_esc = re.escape(str(round(cpu_load, 1)))
+    ram_load = psutil.virtual_memory()
+    ram_load_esc = re.escape(str(round(ram_load.percent, 1)))
+    cpu_temp_msg = '*CPU temperature:* ' + cpu_temp_esc + '°C'
+    cpu_load_msg = '*CPU load:* ' + cpu_load_esc + '%'
+    ram_load_msg = '*RAM load:* ' + ram_load_esc + '%'
+    update.message.reply_markdown_v2(cpu_temp_msg)
+    update.message.reply_markdown_v2(cpu_load_msg)
+    update.message.reply_markdown_v2(ram_load_msg)
+
 def not_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry, I can\'t understand that.')    
 
@@ -103,6 +120,7 @@ def main() -> None:
     updater.dispatcher.add_handler(CommandHandler("start", start_command))
     updater.dispatcher.add_handler(CommandHandler("help", help_command))
     updater.dispatcher.add_handler(CommandHandler("reboot", reboot_command))
+    updater.dispatcher.add_handler(CommandHandler("system", system_command))
 
     # start the bot.
     updater.start_polling()
