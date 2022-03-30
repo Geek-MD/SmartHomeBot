@@ -11,7 +11,7 @@ SmartHomeBot
 <p />
 
 ## Basic Installation
-This bot is programmed to work on a ***Raspberry Py** and relies mainly on *[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)*, so you have to install this package first with
+This bot is programmed to work on a ***Raspberry Py*** and relies mainly on *[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)*, so you have to install this package first with
   
 ```
 pip install python-telegram-bot
