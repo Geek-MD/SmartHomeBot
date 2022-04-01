@@ -40,14 +40,15 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
   
 ## Roadmap
 - [X] Basic functionality, only */start* and */help* commands. [`v0.1.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.1.0)
-- [X] Add a list of allowed users who can interact with the bot. [`v0.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.2.0)
-- [X] Add a list of admin users who can run admin restricted commands. [`v0.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.3.0)
+- [X] Added a list of allowed users who can interact with the bot. [`v0.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.2.0)
+- [X] Added a list of admin users who can run admin restricted commands. [`v0.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.3.0)
 - [X] Fixed a bug with admin restricted commands. [`v0.3.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.3.1)
-- [X] Add */reboot* command, restricted to admin users. [`v0.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.4.0)
-- [X] Add confirmation buttons to execute */reboot* command. [`v0.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.4.0)
+- [X] Added */reboot* command, restricted to admin users. [`v0.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.4.0)
+- [X] Added confirmation buttons to execute */reboot* command. [`v0.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.4.0)
 - [X] Critical data like Telegram bot token, allowed users list and admin users list are stored in external separate JSON files. [`v0.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.5.0)
-- [X] Add */system* command so admins can check CPU temperature of server, CPU and RAM load. [`v0.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.0)
+- [X] Added */system* command so admins can check CPU temperature of server, CPU and RAM load. [`v0.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.0)
 - [X] The information displayed by */system* command is grouped into one unique message. [`v0.6.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.1)
+- [X] CPU Temperature is available only in Linux due to limitations of gpiozero library. Added OS check to bypass CPU Temperature measurement. [`v0.6.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.2)
 - [ ] Add */listusers* command so any user can check allowed users list.
 - [ ] Add */adduser* command so admins can add users to the allowed users list.
 - [ ] Add */removeuser* command so admins can remove users from the allowed users list.
