@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v0.6.1
+# SmartHomeBot v0.6.2
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -69,13 +69,17 @@ def reboot_query(update: Update, context: CallbackContext) -> None:
             continue
 
 def system_command(update: Update, context: CallbackContext) -> None:
-    cpu_temp = CPUTemperature()
-    cpu_temp_esc = re.escape(str(round(cpu_temp.temperature, 1)))
+    if psutil.LINUX == False:
+        # skip CPU temperature if OS is not Linux.
+        system_msg = '*CPU temperature:* _Not available_\n'
+    else:
+        cpu_temp = CPUTemperature()
+        cpu_temp_esc = re.escape(str(round(cpu_temp.temperature, 1)))
+        system_msg = '*CPU temperature:* ' + cpu_temp_esc + '°C\n'
     cpu_load = psutil.cpu_percent(4)
     cpu_load_esc = re.escape(str(round(cpu_load, 1)))
     ram_load = psutil.virtual_memory()
     ram_load_esc = re.escape(str(round(ram_load.percent, 1)))
-    system_msg = '*CPU temperature:* ' + cpu_temp_esc + '°C\n'
     system_msg += '*CPU load:* ' + cpu_load_esc + '%\n'
     system_msg += '*RAM load:* ' + ram_load_esc + '%'
     update.message.reply_markdown_v2(system_msg)
