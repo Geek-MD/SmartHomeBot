@@ -30,7 +30,7 @@ Now clone this repo with
 git clone https://github.com/Geek-MD/SmartHomeBot.git
 ```
   
-Edit ***smarthomebot.json*** and add your bot Telegram token. Edit ***allowed_users.json*** and ***admin_users.json*** with id number of allowed and admin users, and you're done. Now run with
+Edit ***smarthomebot.json*** and add your bot Telegram token. Edit ***allowed_users.json*** and ***admin_users.json*** with id number of allowed and admin users. Edit ***users_data.json*** with userid, username and first name of all allowed users and you're done. Now run with
 
 ```
 python smarthomebot.py
@@ -49,7 +49,7 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added */system* command so admins can check CPU temperature of server, CPU and RAM load. [`v0.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.0)
 - [X] The information displayed by */system* command is grouped into one unique message. [`v0.6.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.1)
 - [X] CPU Temperature is available only in Linux due to limitations of gpiozero library. Added OS check to bypass CPU Temperature measurement. [`v0.6.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.2)
-- [ ] Add */listusers* command so any user can check allowed users list.
+- [X] Add */listusers* command so any user can check allowed users list. [`v0.7.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.0)
 - [ ] Add */adduser* command so admins can add users to the allowed users list.
 - [ ] Add */removeuser* command so admins can remove users from the allowed users list.
 - [ ] Add *owner* tag for main user so he can't be kicked off from allowed users or admin list.
