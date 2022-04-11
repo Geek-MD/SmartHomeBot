@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v0.6.2
+# SmartHomeBot v0.7
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -13,11 +13,14 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from gpiozero import CPUTemperature
 
 # bot variables
-commands = ['/start', '/help', '/reboot', '/system']
+commands = ['/start', '/help', '/reboot', '/system', '/listusers']
 admin_commands = ['/reboot', '/system']
 reboot_keyboard = [[InlineKeyboardButton("yes", callback_data='y'), InlineKeyboardButton("no", callback_data='n')]]
 reboot_keyboard_markup = InlineKeyboardMarkup(reboot_keyboard)
 reboot_option = None
+auth_token = None
+allowed_users = None
+admin_users = None
 
 # multiline markup text used for /help command.
 help_command_text = """This is a simple Telegram Bot used to automate notifications for a Smart Home\.
@@ -25,10 +28,12 @@ help_command_text = """This is a simple Telegram Bot used to automate notificati
 *Available commands*
 \/start \- does nothing, bot starts automatically
 \/help \- shows a list of all available commands
+\/listusers \- list all users allowed to use this bot
 \/reboot \- reboots system \*
-\/system \- show CPU temp, CPU and RAM load \*
+\/system \- shows CPU temp\*\*, CPU and RAM load \*
 
-\* Restricted to admins."""
+\* Restricted to admins
+\*\* Restricted to Linux"""
 # end of multiline text
 
 # enable logging.
@@ -83,7 +88,16 @@ def system_command(update: Update, context: CallbackContext) -> None:
     system_msg += '*CPU load:* ' + cpu_load_esc + '%\n'
     system_msg += '*RAM load:* ' + ram_load_esc + '%'
     update.message.reply_markdown_v2(system_msg)
-    
+
+def listusers_command(update: Update, context: CallbackContext) -> None:
+    listuser_msg = '*List of users allowed to use this bot:*\n\n'
+    user_info = users_info["USERS_DATA"]
+    for n in user_info:
+        user_id = user_info[n]
+        listuser_msg += '\@' + user_id["username"] + '\n'
+    listuser_msg += '\nEnd of list for allowed users\.'
+    update.message.reply_markdown_v2(listuser_msg)
+
 def not_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry, I can\'t understand that.')    
 
@@ -97,11 +111,17 @@ def not_allowed_users(update: Update, context: CallbackContext) -> None:
 def main() -> None:
     # import data stored on external files.
     with open('smarthomebot.json', 'r') as token:
+        global auth_token
         auth_token = json.load(token)
     with open('allowed_users.json', 'r') as users:
+        global allowed_users
         allowed_users = json.load(users)
     with open('admin_users.json', 'r') as admins:
+        global admin_users
         admin_users = json.load(admins)
+    with open('users_data.json', 'r') as users_data:
+        global users_info
+        users_info = json.load(users_data)
 
     # create the Updater and pass it your bot's token.
     updater = Updater(auth_token["AUTH_TOKEN"])
@@ -123,6 +143,7 @@ def main() -> None:
     updater.dispatcher.add_handler(CommandHandler("help", help_command))
     updater.dispatcher.add_handler(CommandHandler("reboot", reboot_command))
     updater.dispatcher.add_handler(CommandHandler("system", system_command))
+    updater.dispatcher.add_handler(CommandHandler("listusers", listusers_command))
 
     # start the bot.
     updater.start_polling()
