@@ -7,7 +7,7 @@ SmartHomeBot
 </h1>
 <p align="center">A simple Telegram Bot used to automate notifications of a Smart Home. This is a work in progress.</p>
 <p />
-<p align="center"><a href="https://www.python.org/"><img alt ="Made with Python" src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg"> <a href="https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt"><img alt="MIT License" src="https://img.shields.io/github/license/Naereen/StrapDown.js.svg"></a> <a href="https://GitHub.com/Geek-MD/SmartHomeBot/releases/"><img alt="GitHub Releases" src="https://img.shields.io/github/release/Geek-MD/SmartHomeBot.svg"></a> <a href="https://github.com/Geek-MD/SmartHomeBot/"><img alt="GitHub Branches" src="https://badgen.net/github/branches/Geek-MD/SmartHomeBot"></a> <img alt="GitHub Stars" src="https://badgen.net/github/stars/Geek-MD/SmartHomeBot"></p>
+<p align="center"><a href="https://www.python.org/"><img alt ="Made with Python" src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg"> <a href="https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt"><img alt="MIT License" src="https://img.shields.io/github/license/Naereen/StrapDown.js.svg"></a> <a href="https://GitHub.com/Geek-MD/SmartHomeBot/releases/"><img alt="GitHub Releases" src="https://img.shields.io/github/release/Geek-MD/SmartHomeBot.svg"> <a href="https://github.com/Geek-MD/SmartHomeBot/"><img alt="GitHub Branches" src="https://badgen.net/github/branches/Geek-MD/SmartHomeBot"></a> <img alt="GitHub Stars" src="https://badgen.net/github/stars/Geek-MD/SmartHomeBot"></p>
 <p />
 
 ## Basic Installation
@@ -30,7 +30,7 @@ Now clone this repo with
 git clone https://github.com/Geek-MD/SmartHomeBot.git
 ```
   
-Edit ***smarthomebot.json*** and add your bot Telegram token. Edit ***allowed_users.json*** and ***admin_users.json*** with id number of allowed and admin users, and you're done. Now run with
+Edit ***smarthomebot.json*** and add your bot Telegram token. Edit ***allowed_users.json*** and ***admin_users.json*** with id number of allowed and admin users. Edit ***users_data.json*** with userid, username and first name of all allowed users and you're done. Now run with
 
 ```
 python smarthomebot.py
@@ -49,7 +49,7 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added */system* command so admins can check CPU temperature of server, CPU and RAM load. [`v0.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.0)
 - [X] The information displayed by */system* command is grouped into one unique message. [`v0.6.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.1)
 - [X] CPU Temperature is available only in Linux due to limitations of gpiozero library. Added OS check to bypass CPU Temperature measurement. [`v0.6.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.2)
-- [ ] Add */listusers* command so any user can check allowed users list.
+- [X] Add */listusers* command so any user can check allowed users list. [`v0.7.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.0)
 - [ ] Add */adduser* command so admins can add users to the allowed users list.
 - [ ] Add */removeuser* command so admins can remove users from the allowed users list.
 - [ ] Add *owner* tag for main user so he can't be kicked off from allowed users or admin list.
