@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v0.7
+# SmartHomeBot v0.7.1
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -8,7 +8,7 @@
 # Use /help to list available commands.
 
 import logging, os, time, json, psutil, re
-from telegram import Update, User, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, User, InlineKeyboardButton, InlineKeyboardMarkup, Bot
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
 from gpiozero import CPUTemperature
 
@@ -20,7 +20,10 @@ reboot_keyboard_markup = InlineKeyboardMarkup(reboot_keyboard)
 reboot_option = None
 auth_token = None
 allowed_users = None
+allowed_users_len = None
 admin_users = None
+chat_id = None
+bot = None
 
 # multiline markup text used for /help command.
 help_command_text = """This is a simple Telegram Bot used to automate notifications for a Smart Home\.
@@ -90,12 +93,23 @@ def system_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_markdown_v2(system_msg)
 
 def listusers_command(update: Update, context: CallbackContext) -> None:
+    global allowed_users
+    global allowed_users_len
+    global auth_token
+    global chat_id
     listuser_msg = '*List of users allowed to use this bot:*\n\n'
-    user_info = users_info["USERS_DATA"]
-    for n in user_info:
-        user_id = user_info[n]
-        listuser_msg += '\@' + user_id["username"] + '\n'
-    listuser_msg += '\nEnd of list for allowed users\.'
+    for n in range(0, allowed_users_len):
+        member_info = bot.getChatMember(chat_id=chat_id, user_id=allowed_users[n])
+        user = member_info["user"]
+        user_id = str(user["id"])
+        username = '@' + user["username"]
+        first_name = user["first_name"]
+        last_name = user["last_name"]
+        if username == None:
+            listuser_msg += first_name + ' ' + last_name
+        else:
+            listuser_msg += username
+        listuser_msg += ' \-\- id: ' + user_id + '\n'
     update.message.reply_markdown_v2(listuser_msg)
 
 def not_command(update: Update, context: CallbackContext) -> None:
@@ -112,38 +126,47 @@ def main() -> None:
     # import data stored on external files.
     with open('smarthomebot.json', 'r') as token:
         global auth_token
-        auth_token = json.load(token)
+        json_token = json.load(token)
+        auth_token = json_token["AUTH_TOKEN"]
     with open('allowed_users.json', 'r') as users:
         global allowed_users
-        allowed_users = json.load(users)
+        global allowed_users_len
+        json_users = json.load(users)
+        allowed_users = json_users["USERS"]
+        allowed_users_len = len(allowed_users)
     with open('admin_users.json', 'r') as admins:
         global admin_users
-        admin_users = json.load(admins)
-    with open('users_data.json', 'r') as users_data:
-        global users_info
-        users_info = json.load(users_data)
+        json_admins = json.load(admins)
+        admin_users = json_admins["ADMINS"]
+    with open('chats.json', 'r') as chats:
+        global chat_id
+        json_chat = json.load(chats)
+        chat_id = json_chat["CHATS"]
 
     # create the Updater and pass it your bot's token.
-    updater = Updater(auth_token["AUTH_TOKEN"])
+    updater = Updater(auth_token)
+    dispatcher = updater.dispatcher
+    global bot
+    bot = Bot(auth_token)
 
     # not allowed users can't interact with the bot.
-    updater.dispatcher.add_handler(MessageHandler(~Filters.user(allowed_users["USERS"]), not_allowed_users))
+    dispatcher.add_handler(MessageHandler(~Filters.user(allowed_users), not_allowed_users))
 
     # inline buttons.
-    updater.dispatcher.add_handler(CallbackQueryHandler(reboot_query))
+    dispatcher.add_handler(CallbackQueryHandler(reboot_query))
 
     # on non command i.e message, reply with not_command function.
-    updater.dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.text(commands), not_command))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.text(commands), not_command))
 
     # on admin command, run is_admin_command function.
-    updater.dispatcher.add_handler(MessageHandler(Filters.text(admin_commands) & ~Filters.user(admin_users["ADMINS"]), not_admin))
+    dispatcher.add_handler(MessageHandler(Filters.text(admin_commands) & ~Filters.user(admin_users), not_admin))
 
     # commands.
-    updater.dispatcher.add_handler(CommandHandler("start", start_command))
-    updater.dispatcher.add_handler(CommandHandler("help", help_command))
-    updater.dispatcher.add_handler(CommandHandler("reboot", reboot_command))
-    updater.dispatcher.add_handler(CommandHandler("system", system_command))
-    updater.dispatcher.add_handler(CommandHandler("listusers", listusers_command))
+    dispatcher.add_handler(CommandHandler("start", start_command))
+    dispatcher.add_handler(CommandHandler("help", help_command))
+    dispatcher.add_handler(CommandHandler("reboot", reboot_command))
+    dispatcher.add_handler(CommandHandler("system", system_command))
+    dispatcher.add_handler(CommandHandler("listusers", listusers_command))
 
     # start the bot.
     updater.start_polling()
