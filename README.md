@@ -50,7 +50,7 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] The information displayed by */system* command is grouped into one unique message. [`v0.6.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.1)
 - [X] CPU Temperature is available only in Linux due to limitations of gpiozero library. Added OS check to bypass CPU Temperature measurement. [`v0.6.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.2)
 - [X] Added */listusers* command so any user can check allowed users list. [`v0.7.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.0)
-- [X] Fixed a bug with */listusers* command. Users data now is read using getChatMember API method. [`v0.7.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.1)
+- [X] Fixed a bug with */listusers* command. Users data now is read using getChatMember API method. Deleted ***users_data.json*** so user info is not stored locally. [`v0.7.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.1)
 - [ ] Add */adduser* command so admins can add users to the allowed users list.
 - [ ] Add */removeuser* command so admins can remove users from the allowed users list.
 - [ ] Add *owner* tag for main user so he can't be kicked off from allowed users or admin list.
