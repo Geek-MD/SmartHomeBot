@@ -1,6 +1,6 @@
 {
   "AUTH_TOKEN": {
-    "bot_token": "bot_token"
+    "bot_token": "bot-token"
   },
   "USERS": {
     "allowed_users": [
