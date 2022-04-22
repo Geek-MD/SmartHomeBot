@@ -30,7 +30,7 @@ Now clone this repo with
 git clone https://github.com/Geek-MD/SmartHomeBot.git
 ```
   
-Edit ***smarthomebot.json*** and add your bot Telegram token. Edit ***allowed_users.json*** and ***admin_users.json*** with id number of allowed and admin users. Edit ***chats.json*** with chat_id used by your bot and you're done. Now run with
+Edit ***config.json*** and add your bot Telegram token, id number of allowed and admin users, id number of bot owner, chat_id used by your bot and you're done. Now run with
 
 ```
 python smarthomebot.py
@@ -51,9 +51,11 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] CPU Temperature is available only in Linux due to limitations of gpiozero library. Added OS check to bypass CPU Temperature measurement. [`v0.6.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.6.2)
 - [X] Added */listusers* command so any user can check allowed users list. [`v0.7.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.0)
 - [X] Fixed a bug with */listusers* command. Users data now is read using getChatMember API method. Deleted ***users_data.json*** so user info is not stored locally. [`v0.7.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.1)
+- [X] Added *owner* tag for main user so he can't be kicked off from allowed users or admin list. [`v0.7.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.2)
+- [X] Added a dynamic keyboard constructor for future commands that uses an inline keyboard. [`v0.7.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.2)
+- [X] Deleted ***smarthomebot.json***, ***allowed_users.json***, ***admin_users.json*** and ***chats.json*** files, and unified them on a single file named ***config.json***. [`v0.7.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.2)
 - [ ] Add */adduser* command so admins can add users to the allowed users list.
 - [ ] Add */removeuser* command so admins can remove users from the allowed users list.
-- [ ] Add *owner* tag for main user so he can't be kicked off from allowed users or admin list.
 - [ ] Add */makeadmin* command so admins can upgrade a user to admin list.
 - [ ] Add */revokeadmin* command so an admin can downgrade a user from admin to allowed user, with the exception of bot owner.
 - [ ] Add */status* command so admins can see a list of running Docker containers.

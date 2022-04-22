@@ -1,0 +1,20 @@
+{
+  "AUTH_TOKEN": {
+    "bot_token": "bot-token"
+  },
+  "USERS": {
+    "allowed_users": [
+      user_id_1,
+      user_id_2
+    ],
+    "admin_users": [
+      user_id_1
+    ],
+    "bot_owner": [
+      user_id_1
+    ]
+  },
+  "CHATS": {
+    "allowed_chats": "chat_id"
+  }
+}
