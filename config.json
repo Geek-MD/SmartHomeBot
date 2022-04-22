@@ -4,14 +4,14 @@
   },
   "USERS": {
     "allowed_users": [
-      user1,
-      user2
+      user_id_1,
+      user_id_2
     ],
     "admin_users": [
-      user1
+      user_id_1
     ],
     "bot_owner": [
-      user1
+      user_id_1
     ]
   },
   "CHATS": {
