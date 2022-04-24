@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v0.7.2
+# SmartHomeBot v0.8.0
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -12,11 +12,15 @@ from telegram import Update, User, InlineKeyboardButton, InlineKeyboardMarkup, B
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
 from gpiozero import CPUTemperature
 
-# bot variables
-commands = ['/start', '/help', '/reboot', '/system', '/listusers']
-admin_commands = ['/reboot', '/system']
+# define some bot variables
+commands = ['/start', '/help', '/reboot', '/system', '/listusers', '/adduser', '/banuser']
+admin_commands = ['/reboot', '/system', '/adduser', '/banuser']
 keyboard_dict = { 
-    "yes_no" : {"y" : "yes", "n" : "no"},
+    "yes_no" : {"y" : "yes", "n" : "no"}
+}
+user_callback_dict = {
+    "adduser" : "User added to allowed users list.",
+    "banuser" : "User removed from allowed users list."
 }
 token_dict = None
 users_dict = None
@@ -27,17 +31,23 @@ admin_users = None
 bot_owner = None
 chat_id = None
 bot = None
-reboot_option = None
+query_data = None
+button_click = False
+process = None
+user_data = ""
+sleep_time = 5
 
 # multiline markup text used for /help command.
 help_command_markup = """This is a simple Telegram Bot used to automate notifications for a Smart Home\.
 
 *Available commands*
-\/start \- does nothing, bot starts automatically
-\/help \- shows a list of all available commands
-\/listusers \- list all users allowed to use this bot
-\/reboot \- reboots system \*
-\/system \- shows CPU temp\*\*, CPU and RAM load \*
+\/start \- does nothing, bot starts automatically\.
+\/help \- shows a list of all available commands\.
+\/listusers \- list all users allowed to use this bot\.
+\/adduser \- add a user to allowed users list with user\_id argument\. \*
+\/banuser \- remove user from allowed users list with user\_id argument\. Bot owner can\'t be banned\. \*
+\/reboot \- reboots system\. \*
+\/system \- shows CPU temp\*\*, CPU and RAM load\. \*
 
 \* Restricted to admins
 \*\* Restricted to Linux"""
@@ -57,8 +67,13 @@ def help_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_markdown_v2(help_command_markup)
 
 def reboot_command(update: Update, context: CallbackContext) -> None:
-    global reboot_option
-    button_pressed = False
+    global process
+    global sleep_time
+    process = "reboot"
+    try:
+        sleep_time = int(context.args[0])
+    except (IndexError, ValueError):
+        sleep_time = 5
     keyboard_markup = keyboard_construct('yes_no')
     update.message.reply_text('Reboot your system?', reply_markup=keyboard_markup)
 
@@ -84,10 +99,34 @@ def listusers_command(update: Update, context: CallbackContext) -> None:
     global allowed_users
     global chat_id
     listusers_msg = '*List of users allowed to use this bot:*\n\n'
-    listusers_msg += users_list('listusers', chat_id, allowed_users, allowed_users)
+    listusers_msg += users_list(chat_id, allowed_users, allowed_users)
     update.message.reply_markdown_v2(listusers_msg)
 
-# define filters callbacks
+def adduser_command(update: Update, context: CallbackContext) -> None:
+    global process
+    global user_data
+    process = "adduser"
+    try:
+        user_id = int(context.args[0])
+        user_data = user_id
+        keyboard_markup = keyboard_construct('yes_no')
+        update.message.reply_text('Are you sure?', reply_markup=keyboard_markup)
+    except (IndexError, ValueError):
+        update.message.reply_text('You haven\'t provided user_id argument.')
+
+def banuser_command(update: Update, context: CallbackContext) -> None:
+    global process
+    global user_data
+    process = "banuser"
+    try:
+        user_id = int(context.args[0])
+        user_data = user_id
+        keyboard_markup = keyboard_construct('yes_no')
+        update.message.reply_text('Are you sure?', reply_markup=keyboard_markup)
+    except (IndexError, ValueError):
+        update.message.reply_text('You haven\'t provided user_id argument.')
+    
+# define filter callbacks
 def not_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry, I can\'t understand that.')    
 
@@ -97,48 +136,99 @@ def not_admin(update: Update, context: CallbackContext) -> None:
 def not_allowed_users(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry you\'re not allowed to use this bot.')
 
-def reboot_query(update: Update, context: CallbackContext) -> None:
-    global reboot_option
-    button_pressed = False
+# define keyboard query handlers
+def keyboard_query(update: Update, context: CallbackContext) -> None:
+    global query_data
+    global process
+    global user_data
+    global sleep_time
+    button_click = False
     query = update.callback_query
-    reboot_option = query.data
-    while button_pressed == False:
-        if reboot_option == "y":
-            query.edit_message_text(text=f'Rebooting in 5 secs...')
-            time.sleep(5)
-            os.system("sudo reboot")
-            break
-        elif reboot_option == "n":
-            query.edit_message_text(text=f'Reboot aborted.')
-            button_pressed = True
-            break
-        elif reboot_option == None:
-            continue
+    query.answer()
+    query_data = query.data
+    while button_click == False:
+        if process == "reboot":
+            button_click = True
+            reboot_callback(query_data, query, sleep_time)
+        elif process == "adduser" or process == "banuser":
+            button_click = True
+            user_callback(process, query_data, user_data, query)
 
-def users_list(context, chat_id, allowed_users, members):
-    users_list_str = str()
+# define internal callbacks
+def reboot_callback(query_data, query, reboot_time):
+    global button_click
+    global process
+    if query_data == "y":
+        query.edit_message_text(text=f'Rebooting in' + reboot_time + ' secs...')
+        time.sleep(reboot_time)
+        os.system("sudo reboot")
+    elif query_data == "n":
+        query.edit_message_text(text=f'Reboot aborted.')
+        button_click = False
+    process = None
+    query_data = None
+
+def user_callback(method, query_data, user_data, query):
+    global button_click
+    global process
+    global user_callback_dict
+    user_callback_answer = user_callback_dict.get(method)
+    if query_data == "y":
+        modify_data(method, user_data, query)
+        query.edit_message_text(text=user_callback_answer)
+    elif query_data == "n":
+        query.edit_message_text(text=f'Command abborted.')
+        button_click = False
+    process = None
+    query_data = None
+
+def modify_data(method, data, query) -> None:
+    global allowed_users
+    global admin_users
+    global bot_owner
+    global users_dict
+    global json_config
+    if method == 'adduser':
+        if data in allowed_users:
+            query.edit_message_text(text=f'User is already on allowed users list.')
+        else:
+            allowed_users.append(data)
+            users_dict.update({"allowed_users": allowed_users})
+            json_config.update({"USERS": users_dict})
+    elif method == 'banuser':
+        if data in admin_users:
+            query.edit_message_text(text=f'The user is an admin, can\'t be kicked off. You must remove him/her from admin list first.')
+        elif data in bot_owner:
+            query.edit_message_text(text=f'The user is the owner of the bot, can\'t be kicked off.')
+        elif data not in allowed_users:
+            query.edit_message_text(text=f'The user is not in allowed users list.')
+        else:
+            allowed_users.remove(data)
+            users_dict.update({"allowed_users": allowed_users})
+            json_config.update({"USERS": users_dict})
+    store_json(json_config)
+
+def store_json(data) -> None:
+    file = open('config.json', 'w')
+    file.write(json.dumps(data, indent=2))
+    file.close()
+
+def users_list(chat_id, allowed_users, members):
+    users_list_msg = ""
     for n in range(0, len(members)):
         user_info = bot.getChatMember(chat_id=chat_id, user_id=members[n])
         user = user_info["user"]
         user_id = str(user["id"])
-        username = '@' + user["username"]
+        username = user["username"]
         first_name = user["first_name"]
         last_name = user["last_name"]
         if username == None:
-            if context == 'chatmembers' and user_id in allowed_users:
-                users_list_str += '_' + first_name + ' ' + last_name + '_'
-            elif context == 'listusers':
-                users_list_str += first_name + ' ' + last_name
+            users_list_msg += first_name + ' ' + last_name
         else:
-            if context == 'chatmembers' and user_id in allowed_users:
-                users_list_str += '_' + username + '_'
-            elif context == 'listusers':
-                users_list_str += username
-        users_list_str += ' \-\- id: ' + user_id
-        if context == 'chatmembers' and user_id in allowed_users:
-            users_list_str += ' \*'
-        users_list_str += '\n'        
-    return users_list_str
+            users_list_msg += '@' + username
+        users_list_msg += ' \-\- id: ' + user_id
+        users_list_msg += '\n'        
+    return users_list_msg
 
 def keyboard_construct(keyboard_name):
     global keyboard_dict
@@ -159,6 +249,7 @@ def main() -> None:
     global bot_owner
     global chat_id
     global json_config
+    global process
 
     file = open('config.json', 'r')
     json_data = file.read()
@@ -184,10 +275,10 @@ def main() -> None:
     dispatcher.add_handler(MessageHandler(~Filters.user(allowed_users), not_allowed_users))
 
     # inline buttons
-    dispatcher.add_handler(CallbackQueryHandler(reboot_query))
+    dispatcher.add_handler(CallbackQueryHandler(keyboard_query))
 
     # on non command i.e message, reply with not_command function
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.text(commands), not_command))
+    dispatcher.add_handler(MessageHandler(~Filters.command, not_command))
 
     # on admin command, run is_admin_command function
     dispatcher.add_handler(MessageHandler(Filters.text(admin_commands) & ~Filters.user(admin_users), not_admin))
@@ -198,7 +289,9 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("reboot", reboot_command))
     dispatcher.add_handler(CommandHandler("system", system_command))
     dispatcher.add_handler(CommandHandler("listusers", listusers_command))
-   
+    dispatcher.add_handler(CommandHandler("adduser", adduser_command))
+    dispatcher.add_handler(CommandHandler("banuser", banuser_command))
+  
     # start the bot
     updater.start_polling()
     updater.idle()
