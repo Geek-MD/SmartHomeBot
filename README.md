@@ -55,7 +55,7 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added a dynamic keyboard constructor for future commands that uses an inline keyboard. [`v0.7.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.2)
 - [X] Deleted ***smarthomebot.json***, ***allowed_users.json***, ***admin_users.json*** and ***chats.json*** files, and unified them on a single file named ***config.json***. [`v0.7.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.2)
 - [X] Added */adduser* command so admins can add users to the allowed users list. [`v0.8.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.8.0)
-- [X] Added */banuser* command so admins can remove users from the allowed users list. [`v0.8.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.8.0)
+- [X] Added */banuser* command so admins can remove users from the allowed users list, with the exception of bot owner. [`v0.8.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.8.0)
 - [X] Modifications to allowed users list are stored directly to ***config.json***. [`v0.8.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.8.0)
 - [ ] Add */makeadmin* command so admins can upgrade a user to admin list.
 - [ ] Add */revokeadmin* command so an admin can downgrade a user from admin to allowed user, with the exception of bot owner.
