@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v0.8.0
+# SmartHomeBot v1.0.0
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -13,14 +13,16 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from gpiozero import CPUTemperature
 
 # define some bot variables
-commands = ['/start', '/help', '/reboot', '/system', '/listusers', '/adduser', '/banuser']
-admin_commands = ['/reboot', '/system', '/adduser', '/banuser']
+commands = ['/start', '/help', '/reboot', '/system', '/listusers', '/adduser', '/banuser', '/makeadmin', '/revokeadmin']
+admin_commands = ['/reboot', '/system', '/adduser', '/banuser', '/makeadmin', '/revokeadmin']
 keyboard_dict = { 
     "yes_no" : {"y" : "yes", "n" : "no"}
 }
 user_callback_dict = {
     "adduser" : "User added to allowed users list.",
-    "banuser" : "User removed from allowed users list."
+    "banuser" : "User removed from allowed users list.",
+    "makeadmin" : "User added to admins list.",
+    "revokeadmin" : "User removed from admins list."
 }
 token_dict = None
 users_dict = None
@@ -36,18 +38,21 @@ button_click = False
 process = None
 user_data = ""
 sleep_time = 5
+method_return = ""
 
 # multiline markup text used for /help command.
 help_command_markup = """This is a simple Telegram Bot used to automate notifications for a Smart Home\.
 
 *Available commands*
-\/start \- does nothing, bot starts automatically\.
-\/help \- shows a list of all available commands\.
-\/listusers \- list all users allowed to use this bot\.
-\/adduser \- add a user to allowed users list with user\_id argument\. \*
-\/banuser \- remove user from allowed users list with user\_id argument\. Bot owner can\'t be banned\. \*
-\/reboot \- reboots system\. \*
-\/system \- shows CPU temp\*\*, CPU and RAM load\. \*
+\/start \- Does nothing, bot starts automatically\.
+\/help \- Shows a list of all available commands\.
+\/listusers \- List all users allowed to use this bot\.
+\/adduser \- Add a user to allowed users list with user\_id argument\. \*
+\/banuser \- Remove a user from allowed users list with user\_id argument\. Bot owner can\'t be banned\. \*
+\/makeadmin \- Add a user to admins list with user\_id argument\. \*
+\/revokeadmin \- Remove a user from admins list with user\_id argument\. Bot owner can\'t be removed\. \*
+\/reboot \- Reboots system\. Default delay time is 5 secs\. You can configure delay time as an argument\. \*
+\/system \- Shows CPU temp\*\*, CPU and RAM load\. \*
 
 \* Restricted to admins
 \*\* Restricted to Linux"""
@@ -125,6 +130,30 @@ def banuser_command(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('Are you sure?', reply_markup=keyboard_markup)
     except (IndexError, ValueError):
         update.message.reply_text('You haven\'t provided user_id argument.')
+
+def makeadmin_command(update: Update, context: CallbackContext) -> None:
+    global process
+    global user_data
+    process = "makeadmin"
+    try:
+        user_id = int(context.args[0])
+        user_data = user_id
+        keyboard_markup = keyboard_construct('yes_no')
+        update.message.reply_text('Are you sure?', reply_markup=keyboard_markup)
+    except (IndexError, ValueError):
+        update.message.reply_text('You haven\'t provided user_id argument.')
+
+def revokeadmin_command(update: Update, context: CallbackContext) -> None:
+    global process
+    global user_data
+    process = "revokeadmin"
+    try:
+        user_id = int(context.args[0])
+        user_data = user_id
+        keyboard_markup = keyboard_construct('yes_no')
+        update.message.reply_text('Are you sure?', reply_markup=keyboard_markup)
+    except (IndexError, ValueError):
+        update.message.reply_text('You haven\'t provided user_id argument.')
     
 # define filter callbacks
 def not_command(update: Update, context: CallbackContext) -> None:
@@ -150,7 +179,7 @@ def keyboard_query(update: Update, context: CallbackContext) -> None:
         if process == "reboot":
             button_click = True
             reboot_callback(query_data, query, sleep_time)
-        elif process == "adduser" or process == "banuser":
+        elif process == "adduser" or "banuser" or "makeadmin" or "revokeadmin":
             button_click = True
             user_callback(process, query_data, user_data, query)
 
@@ -172,10 +201,13 @@ def user_callback(method, query_data, user_data, query):
     global button_click
     global process
     global user_callback_dict
+    global method_return
     user_callback_answer = user_callback_dict.get(method)
     if query_data == "y":
         modify_data(method, user_data, query)
-        query.edit_message_text(text=user_callback_answer)
+        if method_return == True:
+            query.edit_message_text(text=user_callback_answer)
+            method_return = False
     elif query_data == "n":
         query.edit_message_text(text=f'Command abborted.')
         button_click = False
@@ -188,24 +220,59 @@ def modify_data(method, data, query) -> None:
     global bot_owner
     global users_dict
     global json_config
+    global method_return
     if method == 'adduser':
         if data in allowed_users:
-            query.edit_message_text(text=f'User is already on allowed users list.')
+            query.edit_message_text(text=f'The user is already on allowed users list.')
+            method_return = False
+            return method_return
         else:
             allowed_users.append(data)
-            users_dict.update({"allowed_users": allowed_users})
-            json_config.update({"USERS": users_dict})
+            users_dict.update({"allowed_users" : allowed_users})
+            json_config.update({"USERS" : users_dict})
+            method_return = True
     elif method == 'banuser':
-        if data in admin_users:
-            query.edit_message_text(text=f'The user is an admin, can\'t be kicked off. You must remove him/her from admin list first.')
-        elif data in bot_owner:
+        if data in bot_owner:
             query.edit_message_text(text=f'The user is the owner of the bot, can\'t be kicked off.')
+            method_return = False
+            return method_return
+        elif data in admin_users:
+            query.edit_message_text(text=f'The user is an admin, can\'t be kicked off. You must remove the user from admins list first.')
+            method_return = False
+            return method_return
         elif data not in allowed_users:
             query.edit_message_text(text=f'The user is not in allowed users list.')
+            method_return = False
+            return method_return
         else:
             allowed_users.remove(data)
-            users_dict.update({"allowed_users": allowed_users})
-            json_config.update({"USERS": users_dict})
+            users_dict.update({"allowed_users" : allowed_users})
+            json_config.update({"USERS" : users_dict})
+            method_return = True
+    elif method == 'makeadmin':
+        if data in admin_users:
+            query.edit_message_text(text=f'The user is already on admins list.')
+            method_return = False
+            return method_return
+        else:
+            admin_users.append(data)
+            users_dict.update({"admin_users" : admin_users})
+            json_config.update({"USERS" : users_dict})
+            method_return = True
+    elif method == 'revokeadmin':
+        if data in bot_owner:
+            query.edit_message_text(text=f'The user is the owner of the bot, can\'t be removed from admins list.')
+            method_return = False
+            return method_return
+        elif data not in admin_users:
+            query.edit_message_text(text=f'The user is not in admins list.')
+            method_return = False
+            return method_return
+        else:
+            admin_users.remove(data)
+            users_dict.update({"admin_users" : admin_users})
+            json_config.update({"USERS" : users_dict})
+            method_return = True
     store_json(json_config)
 
 def store_json(data) -> None:
@@ -291,6 +358,8 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("listusers", listusers_command))
     dispatcher.add_handler(CommandHandler("adduser", adduser_command))
     dispatcher.add_handler(CommandHandler("banuser", banuser_command))
+    dispatcher.add_handler(CommandHandler("makeadmin", makeadmin_command))
+    dispatcher.add_handler(CommandHandler("revokeadmin", revokeadmin_command))
   
     # start the bot
     updater.start_polling()
