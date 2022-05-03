@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v1.0.0
+# SmartHomeBot v1.1.0
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -13,7 +13,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from gpiozero import CPUTemperature
 
 # define some bot variables
-commands = ['/start', '/help', '/reboot', '/system', '/listusers', '/adduser', '/banuser', '/makeadmin', '/revokeadmin']
+commands = ['/start', '/help', '/reboot', '/system', '/listusers', '/adduser', '/banuser', '/makeadmin', '/revokeadmin', '/adminusers']
 admin_commands = ['/reboot', '/system', '/adduser', '/banuser', '/makeadmin', '/revokeadmin']
 keyboard_dict = { 
     "yes_no" : {"y" : "yes", "n" : "no"}
@@ -47,6 +47,7 @@ help_command_markup = """This is a simple Telegram Bot used to automate notifica
 \/start \- Does nothing, bot starts automatically\.
 \/help \- Shows a list of all available commands\.
 \/listusers \- List all users allowed to use this bot\.
+\/adminusers \- List all users with admin capabilities\.
 \/adduser \- Add a user to allowed users list with user\_id argument\. \*
 \/banuser \- Remove a user from allowed users list with user\_id argument\. Bot owner can\'t be banned\. \*
 \/makeadmin \- Add a user to admins list with user\_id argument\. \*
@@ -72,8 +73,7 @@ def help_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_markdown_v2(help_command_markup)
 
 def reboot_command(update: Update, context: CallbackContext) -> None:
-    global process
-    global sleep_time
+    global process, sleep_time
     process = "reboot"
     try:
         sleep_time = int(context.args[0])
@@ -99,17 +99,21 @@ def system_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_markdown_v2(system_msg)
 
 def listusers_command(update: Update, context: CallbackContext) -> None:
-    global bot
-    global bot_token
-    global allowed_users
-    global chat_id
+    global bot, bot_token, allowed_users, admin_users, chat_id
+    process = "listusers"
     listusers_msg = '*List of users allowed to use this bot:*\n\n'
-    listusers_msg += users_list(chat_id, allowed_users, allowed_users)
+    listusers_msg += users_list(process, chat_id)
     update.message.reply_markdown_v2(listusers_msg)
 
+def adminusers_command(update: Update, context: CallbackContext) -> None:
+    global bot, bot_token, admin_users, chat_id
+    process = "adminusers"
+    adminusers_msg = '*List of admins:*\n\n'
+    adminusers_msg += users_list(process, chat_id)
+    update.message.reply_markdown_v2(adminusers_msg)
+
 def adduser_command(update: Update, context: CallbackContext) -> None:
-    global process
-    global user_data
+    global process, user_data
     process = "adduser"
     try:
         user_id = int(context.args[0])
@@ -120,8 +124,7 @@ def adduser_command(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('You haven\'t provided user_id argument.')
 
 def banuser_command(update: Update, context: CallbackContext) -> None:
-    global process
-    global user_data
+    global process, user_data
     process = "banuser"
     try:
         user_id = int(context.args[0])
@@ -132,8 +135,7 @@ def banuser_command(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('You haven\'t provided user_id argument.')
 
 def makeadmin_command(update: Update, context: CallbackContext) -> None:
-    global process
-    global user_data
+    global process, user_data
     process = "makeadmin"
     try:
         user_id = int(context.args[0])
@@ -144,8 +146,7 @@ def makeadmin_command(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('You haven\'t provided user_id argument.')
 
 def revokeadmin_command(update: Update, context: CallbackContext) -> None:
-    global process
-    global user_data
+    global process, user_data
     process = "revokeadmin"
     try:
         user_id = int(context.args[0])
@@ -167,10 +168,7 @@ def not_allowed_users(update: Update, context: CallbackContext) -> None:
 
 # define keyboard query handlers
 def keyboard_query(update: Update, context: CallbackContext) -> None:
-    global query_data
-    global process
-    global user_data
-    global sleep_time
+    global query_data, process, user_data, sleep_time
     button_click = False
     query = update.callback_query
     query.answer()
@@ -181,14 +179,14 @@ def keyboard_query(update: Update, context: CallbackContext) -> None:
             reboot_callback(query_data, query, sleep_time)
         elif process == "adduser" or "banuser" or "makeadmin" or "revokeadmin":
             button_click = True
-            user_callback(process, query_data, user_data, query)
+            from_user = query.from_user
+            user_callback(process, query_data, user_data, query, from_user)
 
 # define internal callbacks
 def reboot_callback(query_data, query, reboot_time):
-    global button_click
-    global process
+    global button_click, process
     if query_data == "y":
-        query.edit_message_text(text=f'Rebooting in' + reboot_time + ' secs...')
+        query.edit_message_text(text=f'Rebooting in {reboot_time} secs...')
         time.sleep(reboot_time)
         os.system("sudo reboot")
     elif query_data == "n":
@@ -197,29 +195,22 @@ def reboot_callback(query_data, query, reboot_time):
     process = None
     query_data = None
 
-def user_callback(method, query_data, user_data, query):
-    global button_click
-    global process
-    global user_callback_dict
-    global method_return
+def user_callback(method, query_data, user_data, query, from_user):
+    global button_click, process, user_callback_dict, method_return
     user_callback_answer = user_callback_dict.get(method)
     if query_data == "y":
-        modify_data(method, user_data, query)
+        modify_data(method, user_data, query, from_user)
         if method_return == True:
             query.edit_message_text(text=user_callback_answer)
             method_return = False
     elif query_data == "n":
-        query.edit_message_text(text=f'Command abborted.')
+        query.edit_message_text(text=f'Command aborted.')
         button_click = False
     process = None
     query_data = None
 
-def modify_data(method, data, query) -> None:
-    global allowed_users
-    global admin_users
-    global bot_owner
-    global users_dict
-    global json_config
+def modify_data(method, data, query, from_user) -> None:
+    global token_dict, users_dict, chat_dict, bot_token, bot, allowed_users, admin_users, bot_owner, chat_id, config
     global method_return
     if method == 'adduser':
         if data in allowed_users:
@@ -229,11 +220,16 @@ def modify_data(method, data, query) -> None:
         else:
             allowed_users.append(data)
             users_dict.update({"allowed_users" : allowed_users})
-            json_config.update({"USERS" : users_dict})
+            config.update({"USERS" : users_dict})
             method_return = True
+            store_json(config)
     elif method == 'banuser':
         if data in bot_owner:
             query.edit_message_text(text=f'The user is the owner of the bot, can\'t be kicked off.')
+            method_return = False
+            return method_return
+        elif data == from_user:
+            query.edit_message_text(text=f'Can\'t ban yourself from allowed users list.')
             method_return = False
             return method_return
         elif data in admin_users:
@@ -247,8 +243,9 @@ def modify_data(method, data, query) -> None:
         else:
             allowed_users.remove(data)
             users_dict.update({"allowed_users" : allowed_users})
-            json_config.update({"USERS" : users_dict})
+            config.update({"USERS" : users_dict})
             method_return = True
+            store_json(config)
     elif method == 'makeadmin':
         if data in admin_users:
             query.edit_message_text(text=f'The user is already on admins list.')
@@ -257,11 +254,16 @@ def modify_data(method, data, query) -> None:
         else:
             admin_users.append(data)
             users_dict.update({"admin_users" : admin_users})
-            json_config.update({"USERS" : users_dict})
+            config.update({"USERS" : users_dict})
             method_return = True
+            store_json(config)
     elif method == 'revokeadmin':
         if data in bot_owner:
             query.edit_message_text(text=f'The user is the owner of the bot, can\'t be removed from admins list.')
+            method_return = False
+            return method_return
+        elif data == from_user:
+            query.edit_message_text(text=f'Can\'t ban yourself from admins list.')
             method_return = False
             return method_return
         elif data not in admin_users:
@@ -271,30 +273,45 @@ def modify_data(method, data, query) -> None:
         else:
             admin_users.remove(data)
             users_dict.update({"admin_users" : admin_users})
-            json_config.update({"USERS" : users_dict})
+            config.update({"USERS" : users_dict})
             method_return = True
-    store_json(json_config)
+            store_json(config)
 
-def store_json(data) -> None:
+def store_json(json_config) -> None:
+    global token_dict, users_dict, chat_dict, bot_token, bot, allowed_users, admin_users, bot_owner, chat_id, config
     file = open('config.json', 'w')
-    file.write(json.dumps(data, indent=2))
+    file.write(json.dumps(json_config, indent=2))
     file.close()
+    read_config()
 
-def users_list(chat_id, allowed_users, members):
+def users_list(method, chat_id):
+    global allowed_users, admin_users
     users_list_msg = ""
-    for n in range(0, len(members)):
-        user_info = bot.getChatMember(chat_id=chat_id, user_id=members[n])
+    pre = post = ""
+    post_id = ""
+    for n in range(0, len(allowed_users)):
+        user_info = bot.getChatMember(chat_id=chat_id, user_id=allowed_users[n])
         user = user_info["user"]
-        user_id = str(user["id"])
+        user_id = user["id"]
         username = user["username"]
         first_name = user["first_name"]
         last_name = user["last_name"]
-        if username == None:
-            users_list_msg += first_name + ' ' + last_name
+        if method == 'adminusers' and user_id not in admin_users:
+            pass
         else:
-            users_list_msg += '@' + username
-        users_list_msg += ' \-\- id: ' + user_id
-        users_list_msg += '\n'        
+            if user_id in admin_users:
+                pre = post = '*'
+                if method == "listusers":
+                    post_id = ' \*'
+            else:
+                pre = post = '_'
+                post_id = ""
+            if username == None:
+                users_list_msg += f"{pre}{first_name} {last_name}{post} \-\- id: {user_id}{post_id}\n"
+            else:
+                users_list_msg += f"{pre}@{username}{post} \-\- id: {user_id}{post_id}\n"
+    if method == "listusers":
+        users_list_msg += '\n\* admins'
     return users_list_msg
 
 def keyboard_construct(keyboard_name):
@@ -304,35 +321,28 @@ def keyboard_construct(keyboard_name):
         buttons.append(InlineKeyboardButton(text=label, callback_data=key))
     return InlineKeyboardMarkup([buttons])
 
-# main module
-def main() -> None:
-    global token_dict
-    global users_dict
-    global chat_dict
-    global bot_token
-    global bot
-    global allowed_users
-    global admin_users
-    global bot_owner
-    global chat_id
-    global json_config
-    global process
-
+def read_config():
+    global token_dict, users_dict, chat_dict, bot_token, bot, allowed_users, admin_users, bot_owner, chat_id, config
     file = open('config.json', 'r')
     json_data = file.read()
     file.close()
 
-    json_config = json.loads(json_data)
+    config = json.loads(json_data)
 
-    token_dict = json_config.get("AUTH_TOKEN")
+    token_dict = config.get("AUTH_TOKEN")
     bot_token = token_dict.get("bot_token")
-    users_dict = json_config.get("USERS")
+    users_dict = config.get("USERS")
     allowed_users = users_dict.get("allowed_users")
     admin_users = users_dict.get("admin_users")
     bot_owner = users_dict.get("bot_owner")
-    chat_dict = json_config.get("CHATS")
+    chat_dict = config.get("CHATS")
     chat_id = chat_dict.get("allowed_chats")
-    
+
+# main module
+def main() -> None:
+    global token_dict, users_dict, chat_dict, bot_token, bot, allowed_users, admin_users, bot_owner, chat_id, config
+    read_config()
+
     # create the Updater and pass it your bot's token
     updater = Updater(bot_token)
     dispatcher = updater.dispatcher
@@ -345,10 +355,10 @@ def main() -> None:
     dispatcher.add_handler(CallbackQueryHandler(keyboard_query))
 
     # on non command i.e message, reply with not_command function
-    dispatcher.add_handler(MessageHandler(~Filters.command, not_command))
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.text(commands), not_command))
 
-    # on admin command, run is_admin_command function
-    dispatcher.add_handler(MessageHandler(Filters.text(admin_commands) & ~Filters.user(admin_users), not_admin))
+    # on admin command, run not_admin_command function
+    dispatcher.add_handler(MessageHandler(Filters.command & ~Filters.user(user_id=admin_users), not_admin))
 
     # commands
     dispatcher.add_handler(CommandHandler("start", start_command))
@@ -356,6 +366,7 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("reboot", reboot_command))
     dispatcher.add_handler(CommandHandler("system", system_command))
     dispatcher.add_handler(CommandHandler("listusers", listusers_command))
+    dispatcher.add_handler(CommandHandler("adminusers", adminusers_command))
     dispatcher.add_handler(CommandHandler("adduser", adduser_command))
     dispatcher.add_handler(CommandHandler("banuser", banuser_command))
     dispatcher.add_handler(CommandHandler("makeadmin", makeadmin_command))
