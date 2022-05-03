@@ -62,6 +62,7 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added a specific */adminusers* command for listing users with admin capabilities. [`v1.1.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.0)
 - [X] Highlight admin users at */listusers* command. [`v1.1.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.0)
 - [X] Fixed a bug related to admin users filter. [`v1.1.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.0)
+- [X] Added f-string to some dialogs. [`v1.1.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.0)
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
 - [ ] Add Ring functionality thanks to [python-ring-doorbell](https://github.com/tchellomello/python-ring-doorbell).
