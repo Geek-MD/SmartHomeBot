@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v1.1.0
+# SmartHomeBot v1.1.1
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -42,8 +42,8 @@ method_return = ""
 
 # multiline markup text used for /help command.
 help_command_markup = """This is a simple Telegram Bot used to automate notifications for a Smart Home\.
-
 *Available commands*
+
 \/start \- Does nothing, bot starts automatically\.
 \/help \- Shows a list of all available commands\.
 \/listusers \- List all users allowed to use this bot\.
@@ -165,6 +165,12 @@ def not_admin(update: Update, context: CallbackContext) -> None:
 
 def not_allowed_users(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry you\'re not allowed to use this bot.')
+
+def check_command(update: Update, context: CallbackContext) -> None:
+    global commands
+    parsed_command = update.message['text']
+    if parsed_command not in commands:
+        update.message.reply_text('Sorry that\'s not a real command. Check \/help for available commands.')
 
 # define keyboard query handlers
 def keyboard_query(update: Update, context: CallbackContext) -> None:
@@ -348,18 +354,6 @@ def main() -> None:
     dispatcher = updater.dispatcher
     bot = Bot(bot_token)
 
-    # not allowed users can't interact with the bot
-    dispatcher.add_handler(MessageHandler(~Filters.user(allowed_users), not_allowed_users))
-
-    # inline buttons
-    dispatcher.add_handler(CallbackQueryHandler(keyboard_query))
-
-    # on non command i.e message, reply with not_command function
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.text(commands), not_command))
-
-    # on admin command, run not_admin_command function
-    dispatcher.add_handler(MessageHandler(Filters.command & ~Filters.user(user_id=admin_users), not_admin))
-
     # commands
     dispatcher.add_handler(CommandHandler("start", start_command))
     dispatcher.add_handler(CommandHandler("help", help_command))
@@ -371,6 +365,19 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("banuser", banuser_command))
     dispatcher.add_handler(CommandHandler("makeadmin", makeadmin_command))
     dispatcher.add_handler(CommandHandler("revokeadmin", revokeadmin_command))
+
+    # not allowed users can't interact with the bot
+    dispatcher.add_handler(MessageHandler(~Filters.user(allowed_users), not_allowed_users))
+    dispatcher.add_handler(MessageHandler(Filters.command, check_command))
+
+    # inline buttons
+    dispatcher.add_handler(CallbackQueryHandler(keyboard_query))
+
+    # on non command i.e message, reply with not_command function
+    dispatcher.add_handler(MessageHandler(~Filters.command, not_command))
+
+    # on admin command, run not_adminter function
+    dispatcher.add_handler(MessageHandler(Filters.command & ~Filters.user(user_id=admin_users), not_admin))
   
     # start the bot
     updater.start_polling()
