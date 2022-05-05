@@ -65,6 +65,7 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added f-string to some dialogs. [`v1.1.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.0)
 - [X] Fixed a bug related to users and commands filters. [`v1.1.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.1)
 - [X] Fixed a bug related with configuration not getting saved to config file. [`v1.1.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.1)
+- [ ] Add */chatmembers* command to list members of a chat, highlighting allowed users, admins and bot.
 - [ ] Add */version* command to show current version of bot, and notify/alert the user if there's a new version of bot.
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
