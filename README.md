@@ -72,8 +72,8 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added */requests* command to let admins check pending requests to join allowed users list, and approve or dismiss them. [`v1.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.2.0)
 - [X] Added */dismiss* command to reject a request for joining allowed users list. [`v1.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.2.0)
 - [X] Fixed a bug related with admin restricted commands, which could be used by non admin users. [`v1.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.2.0)
-- [ ] Add */banuser* command so an admin can add a user to banned users list so he can't request joining allowed users list.
-- [ ] Add */unban* command son an admin can remove a user from banned users list.
+- [X] Add */banuser* command so an admin can add a user to banned users list so he can't request joining allowed users list. [`v1.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.3.0)
+- [X] Add */unban* command so an admin can remove a user from banned users list. [`v1.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.3.0)
 - [ ] Add */chatmembers* command to list members of a chat, highlighting allowed users, admins and bot.
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
