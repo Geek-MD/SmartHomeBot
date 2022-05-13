@@ -17,11 +17,12 @@ This bot is designed to work on a ***Raspberry Py*** and relies mainly on *[pyth
 pip install python-telegram-bot
 ```
 
-Also you have to install *gpiozero* and *psutil* library used for */system* command.
+Also you have to install *gpiozero*, *psutil* and *requests* libraries used for */system* and */version* command.
 
 ```
 pip install gpiozero
 pip install psutil
+pip install requests
 ```
 
 Now clone this repo with
@@ -55,7 +56,7 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added a dynamic keyboard constructor for future commands that uses an inline keyboard. [`v0.7.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.2)
 - [X] Deleted ***smarthomebot.json***, ***allowed_users.json***, ***admin_users.json*** and ***chats.json*** files, and unified them on a single file named ***config.json***. [`v0.7.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.7.2)
 - [X] Added */adduser* command so admins can add users to the allowed users list. [`v0.8.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.8.0)
-- [X] Added */banuser* command so admins can remove users from the allowed users list, with the exception of bot owner. [`v0.8.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.8.0)
+- [X] Added */user* command so admins can remove users from the allowed users list, with the exception of bot owner. [`v0.8.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.8.0)
 - [X] Modifications to allowed users list are stored directly to ***config.json***. [`v0.8.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v0.8.0)
 - [X] Added */makeadmin* command so admins can upgrade a user to admin list. [`v1.0.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.0.0)
 - [X] Added */revokeadmin* command so an admin can downgrade a user from admin to allowed user, with the exception of bot owner. [`v1.0.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.0.0)
@@ -65,7 +66,15 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added f-string to some dialogs. [`v1.1.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.0)
 - [X] Fixed a bug related to users and commands filters. [`v1.1.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.1)
 - [X] Fixed a bug related with configuration not getting saved to config file. [`v1.1.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.1.1)
-- [ ] Add */version* command to show current version of bot, and notify/alert the user if there's a new version of bot.
+- [X] Added */version* command to show local and GitHub version of the bot. [`v1.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.2.0)
+- [X] Renamed */banuser* command to */removeuser*. [`v1.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.2.0)
+- [X] Added */join* command to let users ask an admin to approve them into allowed users list. [`v1.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.2.0)
+- [X] Added */requests* command to let admins check pending requests to join allowed users list, and approve or dismiss them. [`v1.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.2.0)
+- [X] Added */dismiss* command to reject a request for joining allowed users list. [`v1.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.2.0)
+- [X] Fixed a bug related with admin restricted commands, which could be used by non admin users. [`v1.2.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.2.0)
+- [ ] Add */banuser* command so an admin can add a user to banned users list so he can't request joining allowed users list.
+- [ ] Add */unban* command son an admin can remove a user from banned users list.
+- [ ] Add */chatmembers* command to list members of a chat, highlighting allowed users, admins and bot.
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
 - [ ] Add Ring functionality thanks to [python-ring-doorbell](https://github.com/tchellomello/python-ring-doorbell).

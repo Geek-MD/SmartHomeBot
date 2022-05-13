@@ -12,7 +12,9 @@
     ],
     "bot_owner": [
       user_id_1
-    ]
+    ],
+    "user_requests": [],
+    "user_rejects": []
   },
   "CHATS": {
     "allowed_chats": "chat_id"
