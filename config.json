@@ -14,7 +14,8 @@
       user_id_1
     ],
     "user_requests": [],
-    "user_rejects": []
+    "user_rejects": [],
+    "banned_users": []
   },
   "CHATS": {
     "allowed_chats": "chat_id"
