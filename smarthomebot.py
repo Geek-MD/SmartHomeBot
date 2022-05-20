@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v1.3.0
+# SmartHomeBot v1.4.0
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -13,7 +13,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, Callb
 from gpiozero import CPUTemperature
 
 # define some bot variables
-commands = ['/start', '/help', '/listusers', '/adminusers', '/join', '/requests', '/dismiss', '/adduser', '/removeuser', '/banuser', '/unban', '/makeadmin', '/revokeadmin', '/banlist', '/version', '/system', '/reboot']
+commands = ['/start', '/help', '/listusers', '/adminusers', '/chatmembers', '/join', '/requests', '/dismiss', '/adduser', '/removeuser', '/banuser', '/unban', '/makeadmin', '/revokeadmin', '/banlist', '/version', '/system', '/reboot']
 super_commands = ['/requests', '/dismiss', '/adduser', '/removeuser', '/banuser', '/unban', '/makeadmin', '/revokeadmin', '/banlist', '/version', '/system', '/reboot']
 keyboard_dict = { 
     "yes_no" : {"y" : "yes", "n" : "no"}
@@ -27,7 +27,8 @@ user_callback_dict = {
     "/makeadmin" : "User added to admins list.",
     "/revokeadmin" : "User removed from admins list."
 }
-version = 'v1.3.0'
+version = 'v1.4.0'
+parsed_command = parsed_command_arg = ''
 
 # multiline markup text used for /help command.
 help_command_markup = """This is a simple Telegram Bot used to automate notifications for a Smart Home\.
@@ -37,6 +38,7 @@ _\/start_ \- Does nothing, bot starts automatically\.
 _\/help_ \- Shows a list of all available commands\.
 _\/listusers_ \- List all users allowed to use this bot\.
 _\/adminusers_ \- List all users with admin capabilities\.
+_\/chatmembers_ \- List members of the chat, including allowed users, admins and bot\.
 _\/join_ \- Lets users ask an admin to approve them into allowed users list\.
 
 *Admin restricted commands*
@@ -64,38 +66,38 @@ logger = logging.getLogger(__name__)
 
 # filter handlers
 def not_allowed_users(update: Update, context: CallbackContext) -> None:
-    global parsed_command, parsed_command_arg
-    parsed_command, parsed_command_arg, parsed_command_error = command_parser(update, context)
+    parsed_command, parsed_command_arg, parsed_command_error, user_id, chat_id = command_parser(update, context)
     if parsed_command == '/join' and parsed_command_arg not in banned_users:
+        check_chatmember(user_id)
         join_command(update, context)
     else:
+        check_chatmember(user_id)
         update.message.reply_text('Sorry you\'re not allowed to use this bot, but you can use /join command to request access to an admin.')
 
 def not_command(update: Update, context: CallbackContext) -> None:
+    parsed_command, parsed_command_arg, parsed_command_error, user_id, chat_id = command_parser(update, context)
+    check_chatmember(user_id)
     update.message.reply_text('Sorry, I can\'t understand that.')
 
 def check_command(update: Update, context: CallbackContext) -> None:
-    global parsed_command, parsed_command_arg
-    chat_info = update.message['chat']
-    user_id = int(chat_info['id'])
-    parsed_command, parsed_command_arg, parsed_command_error = command_parser(update, context)
+    parsed_command, parsed_command_arg, parsed_command_error, user_id, chat_id = command_parser(update, context)
     if parsed_command_error == True:
         return
     elif parsed_command not in commands:
         update.message.reply_text('Sorry that\'s not a real command. Check /help for available commands.')
     elif parsed_command in super_commands:
         if user_id in admin_users:
-            admin_commands(update, context, parsed_command, parsed_command_arg)
+            admin_commands(update, context, parsed_command, parsed_command_arg, chat_id)
         else:
             not_admin(update, context)
     elif parsed_command in commands:
-        user_commands(update, context, parsed_command, parsed_command_arg)
+        user_commands(update, context, parsed_command, parsed_command_arg, chat_id)
 
 def not_admin(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Sorry, you\'re not an admin, you can\'t use admin restricted commands.')
 
 # command handlers
-def user_commands(update: Update, context: CallbackContext, parsed_command, parsed_command_arg) -> None:
+def user_commands(update: Update, context: CallbackContext, parsed_command, parsed_command_arg, chat_id) -> None:
     if parsed_command == '/start':
         start_command(update, context)
     elif parsed_command == '/help':
@@ -104,10 +106,12 @@ def user_commands(update: Update, context: CallbackContext, parsed_command, pars
         listusers_command(update, context, parsed_command, chat_id)
     elif parsed_command == '/adminusers':
         adminusers_command(update, context, parsed_command, chat_id)
+    elif parsed_command == '/chatmembers':
+        chatmembers_command(update, context, parsed_command, chat_id)
     elif parsed_command == '/join':
         join_command(update, context, parsed_command)
 
-def admin_commands(update: Update, context: CallbackContext, parsed_command, parsed_command_arg) -> None:
+def admin_commands(update: Update, context: CallbackContext, parsed_command, parsed_command_arg, chat_id) -> None:
     if parsed_command == '/requests':
         requests_command(update, context, parsed_command, chat_id)
     elif parsed_command == '/dismiss':
@@ -119,7 +123,7 @@ def admin_commands(update: Update, context: CallbackContext, parsed_command, par
     elif parsed_command == '/version':
         version_command(update, context, parsed_command)
     elif parsed_command == '/system':
-        system_command(update, context, parsed_command)
+        system_command(update, context, parsed_command, chat_id)
     elif parsed_command == '/reboot':
         reboot_command(update, context, parsed_command, parsed_command_arg)
 
@@ -131,13 +135,18 @@ def help_command(update: Update, context: CallbackContext) -> None:
 
 def listusers_command(update: Update, context: CallbackContext, parsed_command, chat_id) -> None:
     listusers_msg = '*List of users allowed to use this bot:*\n'
-    listusers_msg += users_list(parsed_command, chat_id)
+    listusers_msg += users_list(update, parsed_command, chat_id)
     update.message.reply_markdown_v2(listusers_msg)
 
 def adminusers_command(update: Update, context: CallbackContext, parsed_command, chat_id) -> None:
     adminusers_msg = '*List of admins:*\n'
-    adminusers_msg += users_list(parsed_command, chat_id)
+    adminusers_msg += users_list(update, parsed_command, chat_id)
     update.message.reply_markdown_v2(adminusers_msg)
+
+def chatmembers_command(update: Update, context: CallbackContext, parsed_command, chat_id) -> None:
+    chatmembers_msg = '*List of chat members:*\n'
+    chatmembers_msg += users_list(update, parsed_command, chat_id)
+    update.message.reply_markdown_v2(chatmembers_msg)
 
 def join_command(update: Update, context: CallbackContext, parsed_command) -> None:
     chat_info = update.message['chat']
@@ -177,11 +186,12 @@ def reboot_command(update: Update, context: CallbackContext, parsed_command, *pa
     keyboard_markup = keyboard_construct('yes_no')
     update.message.reply_text('Reboot your system?', reply_markup=keyboard_markup)
 
-def system_command(update: Update, context: CallbackContext, parsed_command) -> None:
+def system_command(update: Update, context: CallbackContext, parsed_command, chat_id) -> None:
     # skip CPU temperature if OS is not Linux.
     if psutil.LINUX == False:
         system_msg = '*CPU temperature:* _Not available_\n'
     else:
+        Bot.SetChatAction(chat_id, 'typing')
         cpu_temp = CPUTemperature()
         cpu_temp_esc = re.escape(str(round(cpu_temp.temperature, 1)))
         system_msg = '*CPU temperature:* ' + cpu_temp_esc + '°C\n'
@@ -195,7 +205,7 @@ def system_command(update: Update, context: CallbackContext, parsed_command) -> 
 
 def banlist_command(update: Update, context: CallbackContext, parsed_command, chat_id):
     banlist_msg = '*List of banned users:*\n'
-    banlist_msg += users_list(parsed_command, chat_id)
+    banlist_msg += users_list(update, parsed_command, chat_id)
     update.message.reply_markdown_v2(banlist_msg)
 
 def version_command(update: Update, context: CallbackContext, parsed_command) -> None:
@@ -319,9 +329,19 @@ def user_callback(query, parsed_command, parsed_command_arg, from_user_id) -> No
         query.edit_message_text(text=user_callback_answer)
 
 # internal modules
+def check_chatmember(user_id) -> None:
+    if user_id not in allowed_users and user_id not in chat_members:
+        chat_members.append(user_id)
+        users_dict.update({"chat_members" : chat_members})
+        config.update({"USERS" : users_dict})
+        store_config(config)
+        read_config()
+
 def command_parser(update: Update, context: CallbackContext) -> None:
     parsed_command_error = False
     parsed_message = update.message
+    chat_info = update.message['chat']
+    user_id = int(chat_info['id'])
     parsed_text = parsed_message['text']
     striped_text = parsed_text.strip()
     splitted_text = striped_text.split()
@@ -335,14 +355,16 @@ def command_parser(update: Update, context: CallbackContext) -> None:
     else:
         parsed_command = splitted_text[0]
         parsed_command_arg = splitted_text[1]
-    return parsed_command, parsed_command_arg, parsed_command_error
+    return parsed_command, parsed_command_arg, parsed_command_error, user_id, chat_id
 
-def users_list(parsed_command, chat_id):
+def users_list(update: Update, parsed_command, chat_id) -> None:
     users_list_msg = pre = post = post_id = ""
     if parsed_command == '/listusers':
         method_list = allowed_users
     elif parsed_command == '/adminusers':
         method_list = admin_users
+    elif parsed_command == '/chatmembers':
+        method_list = allowed_users + chat_members
     elif parsed_command == '/requests':
         method_list = user_requests
     elif parsed_command == '/banlist':
@@ -357,22 +379,29 @@ def users_list(parsed_command, chat_id):
             username = user["username"]
             first_name = user["first_name"]
             last_name = user["last_name"]
-            if (parsed_command == '/adminusers') and (user_id not in admin_users):
+            if parsed_command == '/adminusers' and user_id not in admin_users:
                 pass
             else:
                 if user_id in admin_users:
                     pre = post = '_'
-                    if parsed_command == "/listusers":
+                    if parsed_command == "/listusers" or parsed_command == "/chatmembers":
                         post_id = '\*'
                 else:
                     pre = post = ''
-                    post_id = ""
+                    if parsed_command == "/chatmembers" and user_id in allowed_users:
+                        post_id = "\+"
+                    elif parsed_command == "/chatmembers" and user_id in bot_id:
+                        post_id = "\@"
+                    else:
+                        post_id = ""
                 if username == None:
                     users_list_msg += f"{pre}{first_name} {last_name}{post} \– id: {user_id} {post_id}\n"
                 else:
                     users_list_msg += f"{pre}@{username}{post} \- id: {user_id} {post_id}\n"
-        if parsed_command == "/listusers":
+        if parsed_command == "/listusers" or parsed_command == "/chatmembers":
             users_list_msg += '\n\* admins'
+        if parsed_command == "/chatmembers":
+            users_list_msg += '\n\+ allowed users\n\@ bot'
     return users_list_msg
 
 def keyboard_construct(keyboard_name):
@@ -412,7 +441,7 @@ def store_config(json_config) -> None:
     file.close()
 
 def read_config() -> None:
-    global config, token_dict, bot_token, users_dict, allowed_users, admin_users, bot_owner, user_requests, user_rejects, banned_users, chat_dict, chat_id
+    global config, token_dict, bot_token, users_dict, allowed_users, admin_users, bot_owner, chat_members, user_requests, user_rejects, banned_users, bot_id, chat_dict, chat_id
     file = open('config.json', 'r')
     json_data = file.read()
     file.close()
@@ -425,9 +454,11 @@ def read_config() -> None:
     allowed_users = users_dict.get("allowed_users")
     admin_users = users_dict.get("admin_users")
     bot_owner = users_dict.get("bot_owner")
+    chat_members = users_dict.get("chat_members")
     user_requests = users_dict.get("user_requests")
     user_rejects = users_dict.get("user_rejects")
     banned_users = users_dict.get("banned_users")
+    bot_id = users_dict.get("bot_id")
     chat_dict = config.get("CHATS")
     chat_id = chat_dict.get("allowed_chats")
 
