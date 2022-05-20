@@ -31,7 +31,7 @@ Now clone this repo with
 git clone https://github.com/Geek-MD/SmartHomeBot.git
 ```
   
-Edit ***config.json*** and add your bot Telegram token, id number of allowed and admin users, id number of bot owner, chat_id used by your bot and you're done. Now run with
+Edit ***config.json*** and add your bot Telegram token, id number of allowed and admin users, id number of bot owner, chat id used by your bot, bot id and you're done. Now run with
 
 ```
 python smarthomebot.py
@@ -75,7 +75,8 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added */banuser* command so an admin can add a user to banned users list so he can't request joining allowed users list. [`v1.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.3.0)
 - [X] Added */unban* command so an admin can remove a user from banned users list. [`v1.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.3.0)
 - [X] Added code cleaning, command parser and bug fixes. [`v1.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.3.0)
-- [ ] Add */chatmembers* command to list members of a chat, highlighting allowed users, admins and bot.
+- [X] Added */chatmembers* command to list members of a chat, highlighting allowed users, admins and bot. [`v1.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.0)
+- [X] Added a workaround to discover existing and new chat members, so this can be used by /chatmembers command. [`v1.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.0)
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
 - [ ] Add Ring functionality thanks to [python-ring-doorbell](https://github.com/tchellomello/python-ring-doorbell).
