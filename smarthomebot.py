@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# SmartHomeBot v1.4.0
+# SmartHomeBot v1.4.1
 # A simple Telegram Bot used to automate notifications for a Smart Home.
 # The bot starts automatically and runs until you press Ctrl-C on the command line.
 #
@@ -27,7 +27,7 @@ user_callback_dict = {
     "/makeadmin" : "User added to admins list.",
     "/revokeadmin" : "User removed from admins list."
 }
-version = 'v1.4.0'
+version = 'v1.4.1'
 parsed_command = parsed_command_arg = ''
 
 # multiline markup text used for /help command.
@@ -226,7 +226,7 @@ def reboot_callback(query, reboot_time=5):
     os.system("sudo reboot")
 
 def join_callback(query, parsed_command, from_user_id):
-    modify_data(query, parsed_command, from_user_id, None)
+    user_callback(query, parsed_command, from_user_id, None)
 
 def user_callback(query, parsed_command, parsed_command_arg, from_user_id) -> None:
     user_callback_answer = user_callback_dict.get(parsed_command)
