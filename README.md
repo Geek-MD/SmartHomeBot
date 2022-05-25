@@ -77,6 +77,7 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added code cleaning, command parser and bug fixes. [`v1.3.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.3.0)
 - [X] Added */chatmembers* command to list members of a chat, highlighting allowed users, admins and bot. [`v1.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.0)
 - [X] Added a workaround to discover existing and new chat members, so this can be used by /chatmembers command. [`v1.4.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.0)
+- [X] Fixed an error with */join* command routine. [`v1.4.1`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.1)
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
 - [ ] Add Ring functionality thanks to [python-ring-doorbell](https://github.com/tchellomello/python-ring-doorbell).
