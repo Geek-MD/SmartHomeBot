@@ -84,6 +84,8 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [ ] Add /timer command wich allows users to set timers.
 - [ ] Add /alarm command wich allows users to set alarms.
 - [ ] Add /time command wich allows users check local hour and date.
+- [ ] Add localization and internationalization standards (i18n) so admin can select bot's prefered language.
+- [ ] Add /language command so admins can select bot's prefered language.
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
 - [ ] Add Ring functionality thanks to [python-ring-doorbell](https://github.com/tchellomello/python-ring-doorbell).
