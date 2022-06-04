@@ -81,6 +81,9 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Fixed a bug with ***listusers_command*** subroutine. [`v1.4.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.2)
 - [X] Integrated bot version and bot id in ***config.json***. [`v1.4.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.2)
 - [X] Added a listusers dictionary so */listusers*, */adminusers*, */chatmembers* and */banlist* commands are unified in a single subroutine for code efficiency. [`v1.4.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.2)
+- [ ] Add /timer command wich allows users to set timers.
+- [ ] Add /alarm command wich allows users to set alarms.
+- [ ] Add /time command wich allows users check local hour and date.
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
 - [ ] Add Ring functionality thanks to [python-ring-doorbell](https://github.com/tchellomello/python-ring-doorbell).
