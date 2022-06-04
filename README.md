@@ -81,9 +81,11 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Fixed a bug with ***listusers_command*** subroutine. [`v1.4.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.2)
 - [X] Integrated bot version and bot id in ***config.json***. [`v1.4.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.2)
 - [X] Added a listusers dictionary so */listusers*, */adminusers*, */chatmembers* and */banlist* commands are unified in a single subroutine for code efficiency. [`v1.4.2`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.4.2)
-- [ ] Add /timer command wich allows users to set timers.
-- [ ] Add /alarm command wich allows users to set alarms.
-- [ ] Add /time command wich allows users check local hour and date.
+- [X] Added /time command wich allows users check local hour and date. [`v1.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.5.0)
+- [X] Splited help string into allowed users help string and admin users help string. [`v1.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.5.0)
+- [X] Added /admincommands command which shows available commands for admin users. [`v1.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.5.0)
+- [ ] Add /timer command which allows users to set and display timers.
+- [ ] Add /alarm command which allows users to set and display alarms.
 - [ ] Add localization and internationalization standards (i18n) so admin can select bot's prefered language.
 - [ ] Add /language command so admins can select bot's prefered language.
 - [ ] Add */status* command so admins can see a list of running Docker containers.
