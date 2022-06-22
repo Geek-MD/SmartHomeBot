@@ -23,5 +23,9 @@
   },
   "CHATS": {
     "allowed_chats": "chat_id"
+  },
+  "TIMERS": {
+    "timers": [],
+    "alarms": []
   }
 }
