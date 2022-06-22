@@ -268,7 +268,7 @@ def timer_command(update: Update, context: CallbackContext, parsed_command, pars
         timer_data = ''
         if parsed_command == '/timer':
             timer_type = 'timers'
-            timer_type_single = f'is a timer'
+            timer_type_single = 'is a timer'
             timer_type_plural = f'are {timer_count} timers'
             for x in timers:
                 if timer_count > 2 and timers.index(x) < timer_count-2:
