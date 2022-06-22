@@ -306,7 +306,7 @@ def timer_command(update: Update, context: CallbackContext, parsed_command, pars
         time_hour = now.hour
         time_minute = now.minute
         time_second = now.second
-        if time_error == False:
+        if time_error is False:
             if parsed_command_arg.find(':') > -1:
                 parsed_time = parsed_command_arg.rsplit(":")
                 if len(parsed_time) > 2:
