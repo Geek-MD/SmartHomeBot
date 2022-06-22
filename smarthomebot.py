@@ -369,7 +369,7 @@ def timer_command(update: Update, context: CallbackContext, parsed_command, pars
         now = datetime.now()
         time_day, time_hour, time_minute, time_second, time_error = timer_check(parsed_command, parsed_command_arg)
         later = datetime(now.year, now.month, time_day, hour=time_hour, minute=time_minute, second=time_second)
-        if time_error == False:
+        if time_error is False:
             difference = (later - now)
             total_secs = round(difference.total_seconds())
             timer = timer_start(total_secs, later, parsed_command, parsed_command_arg)
