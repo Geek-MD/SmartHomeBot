@@ -174,7 +174,7 @@ def start_command(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('SmartHomeBot is running. Type /help to list all available commands.')
 
 def help_command(update: Update, context: CallbackContext, parsed_command_arg) -> None:
-    if parsed_command_arg == None:
+    if parsed_command_arg is None:
         update.message.reply_markdown_v2(help_str)
     elif parsed_command_arg == 'timer':
         update.message.reply_markdown_v2(help_timer_str)
