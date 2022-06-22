@@ -363,7 +363,7 @@ def timer_command(update: Update, context: CallbackContext, parsed_command, pars
         return timer
     
     global timer
-    if parsed_command_arg == None:
+    if parsed_command_arg is None:
         timer_list(parsed_command, None)
     else:
         now = datetime.now()
