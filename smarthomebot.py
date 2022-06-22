@@ -323,7 +323,7 @@ def timer_command(update: Update, context: CallbackContext, parsed_command, pars
                     elif time_hour < now.hour:
                         time_day = now.day + 1
             elif parsed_command == "/timer":
-                if parsed_command_arg.endswith("s") == True:
+                if parsed_command_arg.endswith("s") is True:
                     time_second = now.second + int(parsed_command_arg.replace("s", ""))
                 elif parsed_command_arg.endswith("m") == True:
                     time_minute = now.minute + int(parsed_command_arg.replace("m", ""))
