@@ -278,7 +278,7 @@ def timer_command(update: Update, context: CallbackContext, parsed_command, pars
                 if timer_count-1 == timers.index(x):
                     timer_data += f'{x}'
         elif parsed_command == '/alarm':
-            timer_type = f'alarms'
+            timer_type = 'alarms'
             timer_type_single = f'is an alarm'
             timer_type_plural = f'are {alarm_count} alarms'
             for x in alarms:
