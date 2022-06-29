@@ -1,6 +1,8 @@
 {
-  "AUTH_TOKEN": {
-    "bot_token": "bot-token"
+  "BOT_DATA": {
+    "bot_token": "bot-token",
+    "bot_id": bot_id,
+    "bot_version": "v1.5.0"
   },
   "USERS": {
     "allowed_users": [
@@ -16,10 +18,7 @@
     "chat_members": [],
     "user_requests": [],
     "user_rejects": [],
-    "banned_users": [],
-    "bot_id": [
-      bot_id
-    ]
+    "banned_users": []
   },
   "CHATS": {
     "allowed_chats": "chat_id"
