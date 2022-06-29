@@ -87,13 +87,19 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added */timer* command which allows users to set and display timers. [`v1.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.5.0)
 - [X] Added */alarm* command which allows users to set and display alarms. [`v1.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.5.0)
 - [X] Added specific help for */timer* and */alarm* commands so main help does not get overpopulated. [`v1.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.5.0)
+- [ ] Add config_check routine to allow system configuration on first run through command line instead of editing config.json.
+- [ ] Add bot version check at startup and display an alert message.
+- [ ] Add version check for library dependencies at startup, and display an alert message.
 - [ ] Add tags to timers and alarms, so they can get an identifier like "dryer", "washing machine", etc.
 - [ ] Add restart argument for */timer* or */alarm* commands, to restart all configured timers or alarms.
 - [ ] Add localization and internationalization standards (i18n) so admin can select bot's prefered language.
 - [ ] Add */language* command so admins can select bot's prefered language.
 - [ ] Add */status* command so admins can see a list of running Docker containers.
 - [ ] Add */restart* command so admins can restart a specific Docker container.
-- [ ] Add Ring functionality thanks to [python-ring-doorbell](https://github.com/tchellomello/python-ring-doorbell).
+- [ ] Add Ring functionality thanks to [Python Ring Door Bell](https://github.com/tchellomello/python-ring-doorbell).
+- [ ] Add iCloud functionality thanks to [pyicloud](https://github.com/picklepete/pyicloud).
+- [ ] Add Alexa functionality thnaks to [Alexa Skills Kit SDK for Python](https://github.com/alexa/alexa-skills-kit-sdk-for-python).
+- [ ] Add Netatmo functionality thanks to [Netatmo.py](https://github.com/rene-d/netatmo).
 
 ## External Functionality
 - [X] Watchtower notification for Docker container updates through Telegram.
