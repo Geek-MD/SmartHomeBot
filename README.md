@@ -87,9 +87,10 @@ If you want to run the bot at startup, or advanced configuration, check the [Wik
 - [X] Added */timer* command which allows users to set and display timers. [`v1.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.5.0)
 - [X] Added */alarm* command which allows users to set and display alarms. [`v1.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.5.0)
 - [X] Added specific help for */timer* and */alarm* commands so main help does not get overpopulated. [`v1.5.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.5.0)
-- [ ] Add config_check routine to allow system configuration on first run through command line instead of editing config.json.
-- [ ] Add bot version check at startup and display an alert message.
-- [ ] Add version check for library dependencies at startup, and display an alert message.
+- [X] Added config_check routine to allow system configuration on first run through command line instead of editing config.json. [`v1.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.6.0)
+- [X] Added bot version check at startup and display an alert message. [`v1.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.6.0)
+- [X] Added python packages version check at startup, and display an alert message. [`v1.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.6.0)
+- [X] Added */pkgversion* command which allows an admin to check python packages version and display an alert message. [`v1.6.0`](https://github.com/Geek-MD/SmartHomeBot/releases/tag/v1.6.0)
 - [ ] Add tags to timers and alarms, so they can get an identifier like "dryer", "washing machine", etc.
 - [ ] Add restart argument for */timer* or */alarm* commands, to restart all configured timers or alarms.
 - [ ] Add localization and internationalization standards (i18n) so admin can select bot's prefered language.
