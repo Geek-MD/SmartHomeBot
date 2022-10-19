@@ -34,4 +34,4 @@ python3 smarthomebot.py
 If you want to run the bot at startup, or configure advanced settings, check the [Wiki](https://github.com/Geek-MD/SmartHomeBot/wiki).
   
 ## Roadmap
-Check [Changelog](https://github.com/Geek-MD/SmartHomeBot/wiki/Changelog) for information about version enhancements.
+Check [Roadmap](https://github.com/Geek-MD/SmartHomeBot/wiki/Roadmap) for information about version changelog.
