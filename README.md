@@ -11,27 +11,21 @@ SmartHomeBot
 <p />
 
 ## Basic Installation
-This bot is designed to work on a ***Raspberry Py*** and relies mainly on *[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)*, so you have to install this package first with
-  
-```
-pip install python-telegram-bot
-```
+This bot is designed to work on a ***Raspberry Py*** and relies mainly on *[python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot)* along with other libraries like *gpiozero*, *psutil*, *requests*, etc.
 
-Also you have to install *gpiozero*, *psutil* and *requests* libraries used for */system* and */version* command.
-
-```
-pip install gpiozero
-pip install psutil
-pip install requests
-```
-
-Next step is to clone this repo with
+First step is to clone this repo with...
   
 ```
 git clone https://github.com/Geek-MD/SmartHomeBot.git
 ```
+
+Next step is to navigate to the directory were the repo was cloned, and install all necesary dependencies with...
   
-Edit ***config.json*** and add your bot Telegram token, id number of allowed and admin users, id number of bot owner, chat id used by your bot, bot id and you're done, or you just can run the program and it´ll ask you for that parameters at start.
+```
+pip install -r requirements.txt
+```
+  
+Now you have to edit ***config.json*** and add your bot Telegram token, id number of allowed and admin users, id number of bot owner, chat id used by your bot, bot id and you're done, or you just can run the program and it´ll ask you for that parameters at start.
 
 ```
 python3 smarthomebot.py
